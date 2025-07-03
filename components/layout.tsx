@@ -230,7 +230,7 @@ export default function Layout({ children, handleSearch }: LayoutProps) {
 
       <footer className="bg-[#2c1810] text-[#f9f7f4] py-12 px-4 md:px-10">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-xl font-bold text-[#a67c52] mb-4 font-luxury">Nuvinty</h3>
               <p className="text-sm text-[#d4c4b0] leading-relaxed font-body">
@@ -316,7 +316,7 @@ export default function Layout({ children, handleSearch }: LayoutProps) {
                 </li>
               </ul>
             </div>
-          </div>
+          </div> */}
 
           <div className="border-t border-[#6b5b4f] mt-8 pt-8 text-center text-sm text-[#d4c4b0] font-body">
             <p>&copy; 2024 Nuvinty. All rights reserved.</p>
