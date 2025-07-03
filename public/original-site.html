@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuvinty - Luxury Fashion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f7f4;
+            color: #2c1810;
+        }
+
+        .header {
+            background-color: #f9f7f4;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #d4c4b0;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #a67c52;
+            letter-spacing: 1px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 40px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #d4c4b0;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #fefdfb;
+            transition: border-color 0.3s ease;
+            color: #2c1810;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #a67c52;
+        }
+
+        .search-box::placeholder {
+            color: #8a7960;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .save-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b5b4f;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .save-search:hover {
+            color: #a67c52;
+        }
+
+        .heart-icon {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .log-in {
+            color: #a67c52;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .log-in:hover {
+            opacity: 0.7;
+        }
+
+        .sign-up {
+            background-color: #a67c52;
+            color: #fefdfb;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .sign-up:hover {
+            background-color: #8a6441;
+        }
+
+        .filters {
+            background-color: #fefdfb;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            border-bottom: 1px solid #d4c4b0;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: #6b5b4f;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #d4c4b0;
+            border-radius: 6px;
+            background-color: #fefdfb;
+            color: #2c1810;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 140px;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: #a67c52;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #a67c52;
+        }
+
+        .results-header {
+            background-color: #fefdfb;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #d4c4b0;
+        }
+
+        .results-info {
+            color: #6b5b4f;
+            font-size: 14px;
+        }
+
+        .results-info .highlight {
+            color: #a67c52;
+            font-weight: 500;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #d4c4b0;
+            background-color: #fefdfb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #6b5b4f;
+        }
+
+        .view-btn:first-child {
+            border-radius: 6px 0 0 6px;
+        }
+
+        .view-btn:last-child {
+            border-radius: 0 6px 6px 0;
+        }
+
+        .view-btn.active {
+            background-color: #a67c52;
+            border-color: #a67c52;
+            color: #fefdfb;
+        }
+
+        .view-btn:hover:not(.active) {
+            background-color: #f4f0eb;
+            border-color: #a67c52;
+        }
+
+        .grid-icon, .list-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .main-content {
+            background-color: #fefdfb;
+            padding: 40px;
+            color: #6b5b4f;
+            font-size: 16px;
+        }
+
+        .results-count {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c1810;
+            margin-bottom: 30px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .products-grid.list-view {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(44, 24, 16, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(44, 24, 16, 0.15);
+        }
+
+        .products-grid.list-view .product-card {
+            display: flex;
+            flex-direction: row;
+            height: 160px;
+        }
+
+        .products-grid.list-view .product-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 320px;
+            background-color: #f4f0eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #8a7960;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .products-grid.list-view .product-image {
+            width: 200px;
+            height: 160px;
+            flex-shrink: 0;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: #a67c52;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .products-grid.list-view .product-info {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .product-brand {
+            font-size: 12px;
+            color: #8a7960;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            color: #2c1810;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .products-grid.list-view .product-name {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #a67c52;
+            font-weight: 600;
+        }
+
+        .products-grid.list-view .product-price {
+            font-size: 20px;
+        }
+
+        .product-original-price {
+            font-size: 14px;
+            color: #8a7960;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        /* Product Overlay Styles */
+        .product-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(44, 24, 16, 0.8);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .product-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-detail {
+            background-color: #fefdfb;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(44, 24, 16, 0.3);
+        }
+
+        .close-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            font-size: 20px;
+            color: #2c1810;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-overlay:hover {
+            background-color: white;
+        }
+
+        .product-detail-image {
+            flex: 1;
+            background-color: #f4f0eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 600px;
+        }
+
+        .product-detail-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-detail-info {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-detail-price {
+            font-size: 32px;
+            font-weight: 600;
+            color: #a67c52;
+            margin-bottom: 16px;
+        }
+
+        .product-detail-title {
+            font-size: 24px;
+            color: #2c1810;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .product-detail-subtitle {
+            font-size: 16px;
+            color: #6b5b4f;
+            margin-bottom: 32px;
+        }
+
+        .product-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            background-color: #f4f0eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #8a7960;
+        }
+
+        .thumbnail.active {
+            border-color: #a67c52;
+        }
+
+        .thumbnail:hover {
+            border-color: #d4c4b0;
+        }
+
+        .size-selection {
+            margin-bottom: 24px;
+        }
+
+        .size-selection h4 {
+            font-size: 16px;
+            color: #2c1810;
+            margin-bottom: 12px;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .size-option {
+            padding: 12px 16px;
+            border: 2px solid #d4c4b0;
+            border-radius: 8px;
+            background-color: #fefdfb;
+            color: #6b5b4f;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .size-option:hover {
+            border-color: #a67c52;
+            background-color: #f9f7f4;
+        }
+
+        .size-option.selected {
+            border-color: #a67c52;
+            background-color: #a67c52;
+            color: #fefdfb;
+        }
+
+        .size-option.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .measurement-info {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .measurement {
+            text-align: center;
+        }
+
+        .measurement-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a67c52;
+        }
+
+        .measurement-label {
+            font-size: 12px;
+            color: #6b5b4f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .location-info {
+            margin-bottom: 32px;
+        }
+
+        .location-info h4 {
+            font-size: 14px;
+            color: #6b5b4f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .location-info p {
+            color: #2c1810;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: auto;
+        }
+
+        .btn-ebay {
+            background-color: #2c1810;
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-ebay:hover {
+            background-color: #1a0f08;
+        }
+
+        .btn-save, .btn-share {
+            width: 48px;
+            height: 48px;
+            border: 2px solid #d4c4b0;
+            background-color: #fefdfb;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #6b5b4f;
+        }
+
+        .btn-save:hover, .btn-share:hover {
+            border-color: #a67c52;
+            color: #a67c52;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .search-container {
+                margin: 0;
+                max-width: none;
+                width: 100%;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .filter-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .product-detail {
+                flex-direction: column;
+                width: 95%;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+            
+            .product-detail-image {
+                min-height: 300px;
+            }
+            
+            .product-detail-info {
+                padding: 24px;
+            }
+            
+            .measurement-info {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Nuvinty</div>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search luxury fashion..." id="searchInput">
+        </div>
+        
+        <div class="auth-buttons">
+            <a href="#" class="save-search">
+                <svg class="heart-icon" viewBox="0 0 24 24">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Save Search
+            </a>
+            <a href="#" class="log-in">Log In</a>
+            <a href="#" class="sign-up">Sign Up</a>
+        </div>
+    </header>
+
+    <div class="filters">
+        <div class="filter-group">
+            <span class="filter-label">Category:</span>
+            <select class="filter-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="clothing">Clothing</option>
+                <option value="shoes">Shoes</option>
+                <option value="bags">Bags</option>
+                <option value="accessories">Accessories</option>
+                <option value="jewelry">Jewelry</option>
+                <option value="watches">Watches</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-label">Brand:</span>
+            <select class="filter-select" id="brandFilter">
+                <option value="">All Brands</option>
+                <option value="chanel">Chanel</option>
+                <option value="louis-vuitton">Louis Vuitton</option>
+                <option value="gucci">Gucci</option>
+                <option value="prada">Prada</option>
+                <option value="hermes">Hermès</option>
+                <option value="dior">Dior</option>
+                <option value="balenciaga">Balenciaga</option>
+                <option value="saint-laurent">Saint Laurent</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-label">Price:</span>
+            <select class="filter-select" id="priceFilter">
+                <option value="">Any Price</option>
+                <option value="0-500">Under $500</option>
+                <option value="500-1000">$500 - $1,000</option>
+                <option value="1000-2500">$1,000 - $2,500</option>
+                <option value="2500-5000">$2,500 - $5,000</option>
+                <option value="5000+">$5,000+</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="results-header">
+        <div class="results-info">
+            Showing <span class="highlight">1-12</span> of <span class="highlight">17,302</span> results
+        </div>
+        
+        <div class="view-options">
+            <button class="view-btn active" id="gridView">
+                <svg class="grid-icon" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </button>
+            <button class="view-btn" id="listView">
+                <svg class="list-icon" viewBox="0 0 24 24">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="results-count">17,302 results</div>
+        
+        <div class="products-grid">
+            <!-- Row 1 -->
+            <div class="product-card" onclick="openProductDetail('polo-striped', 'Ralph Lauren', 'Classic Striped Long Sleeve Polo', '£34', 'New')">
+                <div class="product-image">
+                    <div class="product-badge">New</div>
+                    <div style="background: linear-gradient(45deg, #1e3a8a, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Striped Polo</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Ralph Lauren</div>
+                    <div class="product-name">Classic Striped Long Sleeve Polo</div>
+                    <div class="product-price">£34</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('check-shirt', 'Barbour', 'Heritage Check Cotton Shirt', '£29', '')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #4a4a4a, #8b7355); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Check Shirt</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Barbour</div>
+                    <div class="product-name">Heritage Check Cotton Shirt</div>
+                    <div class="product-price">£29</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('rugby-shirt', 'Polo Ralph Lauren', 'Classic Rugby Long Sleeve', '£89', 'Sale')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #1f2937, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Rugby Shirt</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Polo Ralph Lauren</div>
+                    <div class="product-name">Classic Rugby Long Sleeve</div>
+                    <div class="product-price">£89 <span class="product-original-price">£120</span></div>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="product-card" onclick="openProductDetail('orange-rugby', 'Lacoste', 'Premium Cotton Rugby Shirt', '£44.99', 'Sale')">
+                <div class="product-image">
+                    <div class="product-badge">Sale</div>
+                    <div style="background: linear-gradient(45deg, #ea580c, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Orange Rugby</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Lacoste</div>
+                    <div class="product-name">Classic Piqué Polo Shirt</div>
+                    <div class="product-price">£75</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('purple-shirt', 'Hugo Boss', 'Slim Fit Cotton Dress Shirt', '£89', 'Sale')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #7c3aed, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Purple Shirt</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Hugo Boss</div>
+                    <div class="product-name">Slim Fit Cotton Dress Shirt</div>
+                    <div class="product-price">£89 <span class="product-original-price">£120</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Detail Overlay -->
+    <div class="product-overlay" id="productOverlay">
+        <div class="product-detail">
+            <button class="close-overlay" onclick="closeProductDetail()">×</button>
+            
+            <div class="product-detail-image" id="productDetailImage">
+                <div style="background: linear-gradient(45deg, #1e3a8a, #ffffff); width: 80%; height: 80%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 12px;">Product Image</div>
+            </div>
+            
+            <div class="product-detail-info">
+                <div class="product-detail-price" id="productDetailPrice">£34</div>
+                <div class="product-detail-title" id="productDetailTitle">Mens Ralph Lauren Rugby Shirt</div>
+                <div class="product-detail-subtitle" id="productDetailSubtitle">Medium</div>
+                
+                <div class="product-thumbnails">
+                    <div class="thumbnail active">
+                        <div style="font-size: 8px; text-align: center;">Main</div>
+                    </div>
+                    <div class="thumbnail">
+                        <div style="font-size: 8px; text-align: center;">Back</div>
+                    </div>
+                    <div class="thumbnail">
+                        <div style="font-size: 8px; text-align: center;">Detail</div>
+                    </div>
+                    <div class="thumbnail">
+                        <div style="font-size: 8px; text-align: center;">Tag</div>
+                    </div>
+                </div>
+                
+                <div class="size-selection">
+                    <h4>Size</h4>
+                    <div class="size-options">
+                        <div class="size-option selected">M</div>
+                        <div class="size-option">L</div>
+                        <div class="size-option unavailable">XL</div>
+                    </div>
+                </div>
+                
+                <div class="measurement-info">
+                    <div class="measurement">
+                        <div class="measurement-value">40</div>
+                        <div class="measurement-label">Chest</div>
+                    </div>
+                    <div class="measurement">
+                        <div class="measurement-value">20</div>
+                        <div class="measurement-label">Pit to Pit</div>
+                    </div>
+                    <div class="measurement">
+                        <div class="measurement-value">M</div>
+                        <div class="measurement-label">Most</div>
+                    </div>
+                </div>
+                
+                <div class="location-info">
+                    <h4>Location</h4>
+                    <p>United Kingdom</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-ebay">
+                        <span>🛒</span>
+                        ebay.com
+                    </button>
+                    <button class="btn-save">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </button>
+                    <button class="btn-share">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16,6 12,2 8,6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            console.log('Searching for:', e.target.value);
+        });
+
+        // Filter functionality
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            console.log('Category filter changed:', e.target.value);
+            updateResults();
+        });
+
+        document.getElementById('brandFilter').addEventListener('change', function(e) {
+            console.log('Brand filter changed:', e.target.value);
+            updateResults();
+        });
+
+        document.getElementById('priceFilter').addEventListener('change', function(e) {
+            console.log('Price filter changed:', e.target.value);
+            updateResults();
+        });
+
+        // View toggle functionality
+        document.getElementById('gridView').addEventListener('click', function() {
+            setActiveView('grid');
+        });
+
+        document.getElementById('listView').addEventListener('click', function() {
+            setActiveView('list');
+        });
+
+        function setActiveView(view) {
+            const gridBtn = document.getElementById('gridView');
+            const listBtn = document.getElementById('listView');
+            const productsGrid = document.querySelector('.products-grid');
+            
+            if (view === 'grid') {
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+                productsGrid.classList.remove('list-view');
+            } else {
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+                productsGrid.classList.add('list-view');
+            }
+            
+            console.log('View changed to:', view);
+        }
+
+        function updateResults() {
+            const category = document.getElementById('categoryFilter').value;
+            const brand = document.getElementById('brandFilter').value;
+            const price = document.getElementById('priceFilter').value;
+            
+            console.log('Filters applied:', { category, brand, price });
+            
+            const resultsInfo = document.querySelector('.results-info');
+            const randomCount = Math.floor(Math.random() * 50) + 1;
+            resultsInfo.innerHTML = `Showing <span class="highlight">1-12</span> of <span class="highlight">${randomCount}</span> results`;
+        }
+
+        // Product detail overlay functionality
+        function openProductDetail(productId, brand, name, price, badge) {
+            const overlay = document.getElementById('productOverlay');
+            const title = document.getElementById('productDetailTitle');
+            const subtitle = document.getElementById('productDetailSubtitle');
+            const priceElement = document.getElementById('productDetailPrice');
+            const imageElement = document.getElementById('productDetailImage');
+            
+            // Update product details
+            title.textContent = `Mens ${brand} ${name.split(' ').slice(-2).join(' ')}`;
+            subtitle.textContent = 'Medium';
+            priceElement.textContent = price;
+            
+            // Update image based on product type
+            const imageStyles = {
+                'polo-striped': 'background: linear-gradient(45deg, #1e3a8a, #ffffff, #8b1538);',
+                'check-shirt': 'background: linear-gradient(45deg, #4a4a4a, #8b7355);',
+                'rugby-shirt': 'background: linear-gradient(45deg, #1f2937, #ffffff);',
+                'orange-rugby': 'background: linear-gradient(45deg, #ea580c, #ffffff);',
+                'varsity-polo': 'background: linear-gradient(45deg, #1e40af, #fbbf24);',
+                'striped-rugby': 'background: linear-gradient(45deg, #1e40af, #ffffff);',
+                'royal-crest': 'background: linear-gradient(45deg, #1e3a8a, #dc2626);',
+                'brazil-polo': 'background: linear-gradient(45deg, #1e40af, #fbbf24, #10b981);',
+                'stadium-1992': 'background: linear-gradient(45deg, #1f2937, #dc2626, #ffffff);',
+                'blue-stripe': 'background: linear-gradient(45deg, #3b82f6, #ffffff);',
+                'green-polo': 'background: linear-gradient(45deg, #059669, #ffffff);',
+                'purple-shirt': 'background: linear-gradient(45deg, #7c3aed, #ffffff);'
+            };
+            
+            const style = imageStyles[productId] || 'background: linear-gradient(45deg, #a67c52, #ffffff);';
+            imageElement.innerHTML = `<div style="${style} width: 80%; height: 80%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border-radius: 12px; font-size: 18px;">Product Image</div>`;
+            
+            // Show overlay
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeProductDetail() {
+            const overlay = document.getElementById('productOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close overlay when clicking outside the product detail
+        document.getElementById('productOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductDetail();
+            }
+        });
+        
+        // Size selection functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('size-option') && !e.target.classList.contains('unavailable')) {
+                document.querySelectorAll('.size-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            }
+        });
+        
+        // Thumbnail selection functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.thumbnail')) {
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                e.target.closest('.thumbnail').classList.add('active');
+            }
+        });
+
+        // Save search functionality
+        document.querySelector('.save-search').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Search saved! (This is a demo feature)');
+        });
+
+        // Auth button functionality
+        document.querySelector('.log-in').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Login functionality would be implemented here');
+        });
+
+        document.querySelector('.sign-up').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Sign up functionality would be implemented here');
+        });
+    </script>
+</body>
+</html>
+                    <div class="product-name">Premium Cotton Rugby Shirt</div>
+                    <div class="product-price">£44.99</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('varsity-polo', 'Tommy Hilfiger', 'Collegiate Varsity Polo Shirt', '£30', '')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #1e40af, #fbbf24); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Varsity Polo</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Tommy Hilfiger</div>
+                    <div class="product-name">Collegiate Varsity Polo Shirt</div>
+                    <div class="product-price">£30</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('striped-rugby', 'Polo Ralph Lauren', 'Vintage Striped Rugby Shirt', '£40', '')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #1e40af, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Striped Rugby</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Polo Ralph Lauren</div>
+                    <div class="product-name">Vintage Striped Rugby Shirt</div>
+                    <div class="product-price">£40</div>
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="product-card" onclick="openProductDetail('royal-crest', 'Polo Ralph Lauren', 'Royal Challenge Crest Sweater', '£81', 'Limited')">
+                <div class="product-image">
+                    <div class="product-badge">Limited</div>
+                    <div style="background: linear-gradient(45deg, #1e3a8a, #dc2626); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">Royal Crest</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Polo Ralph Lauren</div>
+                    <div class="product-name">Royal Challenge Crest Sweater</div>
+                    <div class="product-price">£81</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('brazil-polo', 'Polo Ralph Lauren', 'Brazil Colors Striped Polo', '£37', '')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #1e40af, #fbbf24, #10b981); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Brazil Polo</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Polo Ralph Lauren</div>
+                    <div class="product-name">Brazil Colors Striped Polo</div>
+                    <div class="product-price">£37</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('stadium-1992', 'Polo Ralph Lauren', 'Stadium 1992 Vintage Rugby', '£131', 'Vintage')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #1f2937, #dc2626, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">Stadium 1992</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Polo Ralph Lauren</div>
+                    <div class="product-name">Stadium 1992 Vintage Rugby</div>
+                    <div class="product-price">£131</div>
+                </div>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="product-card" onclick="openProductDetail('blue-stripe', 'Gant', 'Classic Striped Oxford Shirt', '£35', '')">
+                <div class="product-image">
+                    <div style="background: linear-gradient(45deg, #3b82f6, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Blue Stripe</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Gant</div>
+                    <div class="product-name">Classic Striped Oxford Shirt</div>
+                    <div class="product-price">£35</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openProductDetail('green-polo', 'Lacoste', 'Classic Piqué Polo Shirt', '£75', 'New')">
+                <div class="product-image">
+                    <div class="product-badge">New</div>
+                    <div style="background: linear-gradient(45deg, #059669, #ffffff); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Green Polo</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Lacoste</div>
+                    

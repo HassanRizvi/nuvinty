@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-luxury: "Canela", "Didot", "Times New Roman", "Georgia", serif;
+  --font-body: "Canela", "Didot", "Times New Roman", "Georgia", serif;
+}
+
+.font-luxury {
+  font-family: var(--font-luxury);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9f7f4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a67c52;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a6441;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Enhanced focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #a67c52;
+  outline-offset: 2px;
+}
+
+/* Typography improvements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-luxury);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* Luxury button styles */
+.btn-luxury {
+  font-family: var(--font-luxury);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.btn-luxury:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(166, 124, 82, 0.25);
+}
+
+/* Card hover effects - more subtle */
+.card-luxury {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+}
+
+.card-luxury:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(44, 24, 16, 0.12);
+}
+
+/* Text selection styling */
+::selection {
+  background-color: #a67c52;
+  color: #fefdfb;
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
