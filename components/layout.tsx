@@ -22,12 +22,19 @@ export default function Layout({ children, handleSearch }: LayoutProps) {
   const [productSearch, setProductSearch] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<any>(null)
-
+  const [isSearchVisible, setIsSearchVisible] = useState(false)
   useEffect(() => {
     const currentUser = handleGetUser()
     setIsLoggedIn(!!currentUser)
     setUser(currentUser)
   }, [])
+  useEffect(() => {
+    if (window.location.pathname === "/shop") {
+      setIsSearchVisible(true)
+    } else {
+      setIsSearchVisible(false)
+    }
+  }, [window.location.pathname])
   const openAuthModal = (mode: "login" | "signup") => {
     setAuthModal({ isOpen: true, mode })
   }
@@ -52,21 +59,23 @@ export default function Layout({ children, handleSearch }: LayoutProps) {
             </div>
 
             {/* Search Bar */}
-            <div className="flex-1 max-w-md relative">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8a7960]" />
-                <input
-                  type="text"
-                  placeholder="Search by brand, article..."
-                  className="w-full pl-12 pr-4 py-3 bg-[#f8f8f8] rounded-full text-sm font-body placeholder-[#8a7960] focus:outline-none focus:ring-2 focus:ring-[#a67c52] focus:bg-white transition-all"
-                  value={productSearch}
-                  onChange={(e) => {
-                    setProductSearch(e.target.value)
-                    handleSearch?.(e.target.value)
-                  }}
-                />
+            {isSearchVisible && (
+              <div className="flex-1 max-w-md relative">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8a7960]" />
+                  <input
+                    type="text"
+                    placeholder="Search by brand, article..."
+                    className="w-full pl-12 pr-4 py-3 bg-[#f8f8f8] rounded-full text-sm font-body placeholder-[#8a7960] focus:outline-none focus:ring-2 focus:ring-[#a67c52] focus:bg-white transition-all"
+                    value={productSearch}
+                    onChange={(e) => {
+                      setProductSearch(e.target.value)
+                      handleSearch?.(e.target.value)
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-6 flex-shrink-0">
