@@ -24,8 +24,6 @@ const handleStoreUser = (data: {
     _id: string;
     name: string;
     email: string;
-    savedSearches: any[];
-    likedProducts: any[];
 }) => {
     setCookie("user", JSON.stringify(data), 7);
 };
@@ -60,5 +58,6 @@ const getCookie = (name: string): string | null => {
 const deleteCookie = (name: string) => {
     setCookie(name, '', -1);
 };
+
 
 export { featchData, handleStoreUser, handleGetUser, setCookie, getCookie, deleteCookie, GetData };

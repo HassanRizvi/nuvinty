@@ -24,6 +24,10 @@ const Endpoints = {
         getAllFav: (userId, page = 1, limit = 12) => ({
             url: `${BaseUrl}/user/allfav?userId=${userId}&page=${page}&limit=${limit}`,
             method: "GET"
+        }),
+        getUser: (userId) => ({
+            url: `${BaseUrl}/user/getbyId?userId=${userId}`,
+            method: "GET"
         })
     },
     product: {
@@ -31,6 +35,12 @@ const Endpoints = {
             url: `${BaseUrl}/product?search=${encodeURIComponent(search)}&page=${page}&limit=${limit}`,
             method: "GET"
         })
+    },
+    queries: {
+        create: {
+            url: `${BaseUrl}/queries/create`,
+            method: "POST"
+        }
     }
 }
 export { BaseUrl, Endpoints }

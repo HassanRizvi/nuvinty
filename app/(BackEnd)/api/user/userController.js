@@ -107,4 +107,32 @@ async function getAllFav(body) {
         }
     }
 }
-export { addToFav, getFav, getAllFav }
+async function getUser(body) {
+    try {
+        await connectDB()
+        const user = await User.findById(body.userId)
+        if (!user) {
+            return {
+                status: 404,
+                message: "User not found"
+            }
+        }
+        const filteredUser = {
+            role: user.role,
+            name: user.name,
+            email: user.email
+        }
+        return {
+            status: 200,
+            message: "User",
+            data: filteredUser
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            status: 500,
+            message: "Failed to fetch user"
+        }
+    }
+}
+export { addToFav, getFav, getAllFav, getUser }

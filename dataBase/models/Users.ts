@@ -1,6 +1,7 @@
 import { Schema, model, models, Types } from 'mongoose'
 
 const userSchema = new Schema({
+
     name: {
         type: String,
         required: [true, 'Name is required']
@@ -29,6 +30,10 @@ const userSchema = new Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    role: {
+        type: String,
+        default: 'user'
     }
 })
 
