@@ -1,59 +1,52 @@
 import { getAllFav } from "../userController";
-import { NextResponse } from "next/server"
+import { corsHeaders, handleOptions } from "@/lib/cors"; // ✅ import CORS helpers
 
-// export async function GET(request) {
-//     try {
-//         await connectDB()
-
-//         // Get userId from query params
-//         const { searchParams } = new URL(request.url)
-//         const userId = searchParams.get("userId")
-
-//         if (!userId) {
-//             return NextResponse.json({ error: "User ID is required" }, { status: 400 })
-//         }
-
-//         // Find user and get their liked products
-//         const user = await User.findById(userId)
-//         if (!user) {
-//             return NextResponse.json({ error: "User not found" }, { status: 404 })
-//         }
-
-//         // Get full product details for all liked products
-//         const likedProducts = await Product.find({
-//             _id: { $in: user.likedProducts }
-//         })
-
-//         return NextResponse.json(likedProducts, { status: 200 })
-
-//     } catch (error) {
-//         console.error("Error fetching liked products:", error)
-//         return NextResponse.json(
-//             { error: "Failed to fetch liked products" },
-//             { status: 500 }
-//         )
-//     }
-// }
+// ✅ Preflight CORS handler (still needed even for GETs sometimes)
+export async function OPTIONS() {
+  return handleOptions();
+}
 
 export async function GET(request) {
-    try {
-        const { searchParams } = new URL(request.url)
-        const userId = searchParams.get('userId')
-        const page = searchParams.get('page') || '1'
-        const limit = searchParams.get('limit') || '12'
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+    const page = searchParams.get("page") || "1";
+    const limit = searchParams.get("limit") || "12";
 
-        if (!userId) {
-            return NextResponse.json({ error: 'userId is required' }, { status: 400 })
-        }
-
-        const response = await getAllFav({ 
-            userId, 
-            page: parseInt(page), 
-            limit: parseInt(limit) 
-        })
-        return NextResponse.json(response, { status: response.status })
-    } catch (error) {
-        console.log(error)
-        return NextResponse.json({ error: 'Failed to get favorites' }, { status: 500 })
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "userId is required" }), {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders, // ✅ add CORS headers
+        },
+      });
     }
+
+    const response = await getAllFav({
+      userId,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    });
+
+    return new Response(JSON.stringify(response), {
+      status: response.status,
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders, // ✅ add CORS headers
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response(
+      JSON.stringify({ error: "Failed to get favorites" }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders, // ✅ add CORS headers on error too
+        },
+      }
+    );
+  }
 }

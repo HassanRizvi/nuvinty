@@ -1,17 +1,41 @@
 import { signUp } from "../authController";
-import { NextResponse } from "next/server";
+import { corsHeaders, handleOptions } from "@/lib/cors"; // ✅ import your reusable CORS helpers
 
-export async function POST(request) {
-    try {
-        const body = await request.json()
-        const response = await signUp(body)
-        return NextResponse.json(response, { status: response.status })
-    } catch (error) {
-        if (error.code === 11000) {
-            return NextResponse.json({ error: 'Email already exists' }, { status: 400 })
-        }
-        console.log("SignUp error", error)
-        return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
-    }
+// ✅ Preflight handler
+export async function OPTIONS() {
+  return handleOptions();
 }
 
+// ✅ Sign-Up POST handler
+export async function POST(request) {
+  try {
+    const body = await request.json();
+    const response = await signUp(body);
+
+    return new Response(JSON.stringify(response), {
+      status: response.status,
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders, // ✅ add CORS headers
+      },
+    });
+  } catch (error) {
+    let status = 500;
+    let errorMessage = "Failed to create user";
+
+    if (error.code === 11000) {
+      errorMessage = "Email already exists";
+      status = 400;
+    }
+
+    console.error("SignUp error", error);
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders, // ✅ add CORS headers even on errors
+      },
+    });
+  }
+}
