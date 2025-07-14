@@ -426,7 +426,7 @@ export default function Shop({
 
             {/* Full Screen Product Modal */}
             {fullScreenImage && selectedProduct && (
-                <div className="fixed inset-0 bg-white z-[60] flex">
+                <div className="fixed inset-0 bg-white z-[60] flex md:flex-row flex-col">
                     {/* Close Button */}
                     <button
                         onClick={closeFullScreenImage}
@@ -445,7 +445,7 @@ export default function Shop({
                     </div>
 
                     {/* Product Details Sidebar */}
-                    <div className="w-80 lg:w-96 bg-white p-6 overflow-y-auto border-l border-[#d4c4b0] flex flex-col">
+                    <div className="w-100 md:w-96 bg-white p-6 overflow-y-auto border-l border-[#d4c4b0] flex flex-col">
                         {/* Price */}
                         <div className="text-right mb-4">
                             <div className="text-2xl font-luxury font-semibold text-[#2c1810]">{"100"}</div>
