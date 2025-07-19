@@ -20,7 +20,7 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          ssh -o StrictHostKeyChecking=no digitaledge@92.205.110.175 "
           export PATH=\"\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\" &&
             cd ${{ secrets.PROJECT_PATH }} &&
             echo '✅ Writing .env file...' &&
