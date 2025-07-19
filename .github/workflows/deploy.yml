@@ -24,7 +24,7 @@ jobs:
           export PATH=\"\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\" &&
             cd ${{ secrets.PROJECT_PATH }} &&
             echo '✅ Writing .env file...' &&
-            sudo sh -c "printf '%s' '${{ secrets.ENV_FILE }}' > .env"  &&
+            echo "${{ secrets.ENV_FILE }}" | sudo tee .env > /dev/null  &&
             echo '✅ Pulling latest code...' &&
            sudo git pull  &&
 
