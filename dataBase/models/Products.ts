@@ -43,6 +43,18 @@ const ProductSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
+    item_id: {
+        type: String,
+        unique: true,
+      },
+      currency: {
+        type: String,
+        default: 'USD',
+      },
+      price: {
+        type: String, // or Number if you plan to use it for math
+        required: true,
+      },
 }, { timestamps: true });
 
 export const Product = models.Product || model('Product', ProductSchema)

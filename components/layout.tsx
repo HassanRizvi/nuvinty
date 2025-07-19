@@ -11,9 +11,10 @@ import { Endpoints } from "@/config"
 interface LayoutProps {
   children: React.ReactNode
   handleSearch?: (search: string) => void
+  searchQuery?: string
 }
 
-export default function Layout({ children, handleSearch }: LayoutProps) {
+export default function Layout({ children, handleSearch, searchQuery }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [authModal, setAuthModal] = useState<{ isOpen: boolean; mode: "login" | "signup" | "query" }>({
@@ -33,6 +34,9 @@ export default function Layout({ children, handleSearch }: LayoutProps) {
   useEffect(() => {
     getUserRole()
   }, [user])
+  useEffect(() => {
+    setProductSearch(searchQuery || "")
+  }, [searchQuery])
   const getUserRole = async () => {
     const currentUser = handleGetUser()
     const response = await GetData(Endpoints.user.getUser(currentUser._id))

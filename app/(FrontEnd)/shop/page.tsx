@@ -9,9 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function ShopPage() {
   const handleGetProducts = async () => {
     try {
-      console.log("BaseUrl", process.env.NEXT_PUBLIC_BASE_URL)
-      const products = await GetData(Endpoints.product.getProducts("", 1, 20))
-      console.log("Products IDs of page :", {}, products.products.map((product: ProductInterface) => product._id))
+      const products = await GetData(Endpoints.product.getProducts("", 1, 20, "", "", "", "", "", "", ""))
       return products
     } catch (error) {
       console.error("Error fetching products:", error)

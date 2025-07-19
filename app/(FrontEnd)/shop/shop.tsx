@@ -1,7 +1,6 @@
 "use client"
-
+import { useSearchParams, useRouter } from 'next/navigation'
 import React from "react"
-
 import { useState, useEffect } from "react"
 import { Grid, List, X, Heart, ChevronLeft, ChevronRight } from "lucide-react"
 import Layout from "@/components/layout"
@@ -34,9 +33,50 @@ export default function Shop({
     const [currentPagination, setCurrentPagination] = useState<PaginationInfo>(pagination)
     const [isLoading, setIsLoading] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const [category, setCategory] = useState("")
+    const [brand, setBrand] = useState("")
+    const [condition, setCondition] = useState("")
+    const [size, setSize] = useState("")
+    const [location, setLocation] = useState("")
+    const [gender, setGender] = useState("")
+    const [price, setPrice] = useState("")
+    const searchParams = useSearchParams()
+    const router = useRouter()
+
+
+
 
     // Initialize savedProducts with user's liked products
     useEffect(() => {
+        const q = searchParams.get('q')
+        const category = searchParams.get('category')
+        const brand = searchParams.get('brand')
+        const condition = searchParams.get('condition')
+        const size = searchParams.get('size')
+        const location = searchParams.get('location')
+        const gender = searchParams.get('gender')
+        const price = searchParams.get('price')
+
+        setSearchQuery(q || "")
+        setCategory(category || "")
+        setBrand(brand || "")
+        setCondition(condition || "")
+        setSize(size || "")
+        setLocation(location || "")
+        setGender(gender || "")
+        setPrice(price || "")
+        const qVal = q || ""
+        const categoryVal = category || ""
+        const brandVal = brand || ""
+        const conditionVal = condition || ""
+        const sizeVal = size || ""
+        const locationVal = location || ""
+        const genderVal = gender || ""
+        const priceVal = price || ""
+        // if (qVal || categoryVal || brandVal || conditionVal || sizeVal || locationVal || genderVal || priceVal) {
+        //     fetchPage(1, qVal, categoryVal, brandVal, conditionVal, sizeVal, locationVal, genderVal, priceVal)
+        // }
+
         const fetchFav = async () => {
             const user = handleGetUser()
             if (user && user._id) {
@@ -59,19 +99,45 @@ export default function Shop({
     }, [])
 
     // Update products when props change
-    useEffect(() => {
-        setCurrentProducts(products)
-        setCurrentPagination(pagination)
-    }, [products, pagination])
+    // useEffect(() => {
+    //     setCurrentProducts(products)
+    //     setCurrentPagination(pagination)
+    // }, [products, pagination])
 
-    const fetchPage = async (page: number, search: string = searchQuery) => {
+    const fetchPage = async (page: number, search: string = searchQuery, category: string = "", brand: string = "", condition: string = "", size: string = "", location: string = "", gender: string = "", price: string = "") => {
         setIsLoading(true)
         try {
-            const response = await GetData(Endpoints.product.getProducts(search, page, currentPagination.limit))
+            const response = await GetData(Endpoints.product.getProducts(search, page, currentPagination.limit, category, brand, condition, size, location, gender, price))
             if (response.products) {
-                console.log("Products IDs of page :", { page }, response.products.map((product: ProductInterface) => product._id))
-                setCurrentProducts(response.products)
-                setCurrentPagination(response.pagination)
+                console.log("Products available :", response.products.length)
+                if (response.products.length != 0) {
+                    setCurrentProducts(response.products)
+                    setCurrentPagination(response.pagination)
+                } else {
+                    console.log("Response ", response)
+                    console.log("No products available")
+                    setCurrentProducts([])
+                    setCurrentPagination({
+                        currentPage: 1,
+                        totalPages: 1,
+                        totalProducts: 0,
+                        hasNextPage: false,
+                        hasPrevPage: false,
+                        limit: 12
+                    })
+                }
+                // setCurrentProducts(response.products)
+                // setCurrentPagination(response.pagination)
+            } else {
+                setCurrentProducts([])
+                setCurrentPagination({
+                    currentPage: 1,
+                    totalPages: 1,
+                    totalProducts: 0,
+                    hasNextPage: false,
+                    hasPrevPage: false,
+                    limit: 12
+                })
             }
         } catch (error) {
             console.error("Error fetching page:", error)
@@ -87,8 +153,11 @@ export default function Shop({
     }
 
     const handleSearch = async (query: string) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('q', query)
+        router.push(`/shop?${params.toString()}`)
         setSearchQuery(query)
-        await fetchPage(1, query)
+        await fetchPage(1, query, category, brand, condition, size, location, gender, price)
     }
 
     const toggleSaveProduct = async (productId: string, e: React.MouseEvent) => {
@@ -193,7 +262,55 @@ export default function Shop({
             window.scrollTo(0, Number.parseInt(scrollY))
         }
     }
-
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('category', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setCategory(e.target.value)
+        fetchPage(1, searchQuery, e.target.value, brand, condition, size, location, gender, price)
+    }
+    const handleBrandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('brand', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setBrand(e.target.value)
+        fetchPage(1, searchQuery, category, e.target.value, condition, size, location, gender, price)
+    }
+    const handleConditionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('condition', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setCondition(e.target.value)
+        fetchPage(1, searchQuery, category, brand, e.target.value, size, location, gender, price)
+    }
+    const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('size', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setSize(e.target.value)
+        fetchPage(1, searchQuery, category, brand, condition, e.target.value, location, gender, price)
+    }
+    const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('location', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setLocation(e.target.value)
+        fetchPage(1, searchQuery, category, brand, condition, size, e.target.value, gender, price)
+    }
+    const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('gender', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setGender(e.target.value)
+        fetchPage(1, searchQuery, category, brand, condition, size, location, e.target.value, price)
+    }
+    const handlePriceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('price', e.target.value)
+        router.push(`/shop?${params.toString()}`)
+        setPrice(e.target.value)
+        fetchPage(1, searchQuery, category, brand, condition, size, location, gender, e.target.value)
+    }
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -210,37 +327,88 @@ export default function Shop({
     }, [fullScreenImage, selectedProduct])
 
     return (
-        <Layout handleSearch={handleSearch}>
+        <Layout handleSearch={handleSearch} searchQuery={searchQuery}>
             {/* Search and Filters */}
-            {/* <div className="bg-[#fefdfb] px-4 md:px-10 py-6 border-b border-[#d4c4b0]">
+            <div className="bg-[#fefdfb] px-4 md:px-10 py-6 border-b border-[#d4c4b0]">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-wrap gap-6">
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Category:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body">
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleCategoryChange(e)} value={category}>
                                 <option value="">All Categories</option>
-                                <option value="handbags">Handbags</option>
-                                <option value="crossbody">Crossbody Bags</option>
-                                <option value="wallets">Wallets</option>
-                                <option value="accessories">Accessories</option>
+                                <option value="Shoes">Shoes</option>
+                                <option value="Clothes">Clothes</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Jewelry">Jewelry</option>
+                                <option value="Home">Home</option>
+                                <option value="Beauty">Beauty</option>
+                                <option value="Electronics">Electronics</option>
                             </select>
                         </div>
 
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Brand:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body">
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleBrandChange(e)} value={brand}>
                                 <option value="">All Brands</option>
-                                <option value="chanel">Chanel</option>
-                                <option value="mulberry">Mulberry</option>
-                                <option value="gucci">Gucci</option>
-                                <option value="prada">Prada</option>
-                                <option value="dior">Dior</option>
-                                <option value="burberry">Burberry</option>
-                                <option value="loewe">Loewe</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Jordan">Jordan</option>
+                                <option value="Nike">Nike</option>
+                                <option value="Adidas">Adidas</option>
+                                <option value="Puma">Puma</option>
+                                <option value="Reebok">Reebok</option>
+                                <option value="Converse">Converse</option>
+                                <option value="Vans">Vans</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span>
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
+                                <option value="">Any Condition</option>
+                                <option value="New">New</option>
+                                <option value="Open Box">Open Box</option>
+                                <option value="Very Good">Very Good</option>
+                                <option value="Preowned">Preowned</option>
+                                <option value="Used">Used</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Size:</span>
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
+                                <option value="">Any Condition</option>
+                                <option value="Used">Jordan</option>
+                                <option value="Preowned">Nike</option>
+                                <option value="Very Good">Adidas</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Location:</span>
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
+                                <option value="">Any Location</option>
+                                <option value="US">US</option>
+                                <option value="UK">UK</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span>
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
+                                <option value="">Any Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Unisex">Unisex</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
+                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
+                                <option value="">Any Price</option>
+                                <option value="0-200">Under $200</option>
+                                <option value="200-400">$200 - $400</option>
+                                <option value="400-600">$400 - $600</option>
+                                <option value="600+">$600+</option>
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                             <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
                             <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body">
                                 <option value="">Any Price</option>
@@ -249,10 +417,10 @@ export default function Shop({
                                 <option value="400-600">£400 - £600</option>
                                 <option value="600+">£600+</option>
                             </select>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
-            </div> */}
+            </div>
 
             {/* Results Header */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-4 border-b border-[#d4c4b0]">
@@ -293,7 +461,9 @@ export default function Shop({
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
                     <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{currentPagination.totalProducts} results</h1>
-
+                    {currentPagination.totalProducts === 0 && (
+                        <div className="text-center text-lg text-[#6b5b4f] font-body h-32 flex items-center justify-center">No products found</div>
+                    )}
                     <div
                         className={`grid gap-8 transition-all duration-300 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"
                             }`}
@@ -340,9 +510,9 @@ export default function Shop({
                                     <div
                                         className={`text-[#a67c52] font-semibold font-luxury ${viewMode === "list" ? "text-xl" : "text-lg"}`}
                                     >
-                                        {"100"}
+                                        {product?.price ? product.price : "100"} {product?.currency ? product.currency : ""}
                                     </div>
-                                    <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • United Kingdom</div>
+                                    <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • {product.location ?? ""}</div>
                                 </div>
                             </div>
                         ))}
@@ -417,8 +587,12 @@ export default function Shop({
 
                     {/* Loading Indicator */}
                     {isLoading && (
-                        <div className="mt-8 flex justify-center">
-                            <div className="text-[#6b5b4f] font-body">Loading...</div>
+                        <div className="mt-8 flex justify-center h-32">
+                            <div className="flex items-center justify-center space-x-2">
+                                <div className="w-3 h-3 rounded-full bg-[#a67c52] animate-bounce [animation-delay:-0.3s]"></div>
+                                <div className="w-3 h-3 rounded-full bg-[#a67c52] animate-bounce [animation-delay:-0.15s]"></div>
+                                <div className="w-3 h-3 rounded-full bg-[#a67c52] animate-bounce"></div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -448,7 +622,7 @@ export default function Shop({
                     <div className="w-100 md:w-96 bg-white p-6 overflow-y-auto border-l border-[#d4c4b0] flex flex-col">
                         {/* Price */}
                         <div className="text-right mb-4">
-                            <div className="text-2xl font-luxury font-semibold text-[#2c1810]">{"100"}</div>
+                            <div className="text-2xl font-luxury font-semibold text-[#2c1810]">{selectedProduct.price ? selectedProduct.price : "100"} {selectedProduct.currency ? selectedProduct.currency : ""}</div>
                         </div>
 
                         {/* Product Info */}
@@ -600,4 +774,59 @@ export default function Shop({
             )}
         </Layout>
     )
+}
+
+export async function getServerSideProps(context: any) {
+    const {
+        q = "",
+        category = "",
+        brand = "",
+        condition = "",
+        size = "",
+        location = "",
+        gender = "",
+        price = "",
+    } = context.query;
+
+    const limit = 12;
+    let products = [];
+    let pagination = {
+        currentPage: 1,
+        totalPages: 1,
+        totalProducts: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+        limit,
+    };
+
+    try {
+        const response = await GetData(
+            Endpoints.product.getProducts(
+                q,
+                1,
+                limit,
+                category,
+                brand,
+                condition,
+                size,
+                location,
+                gender,
+                price
+            )
+        );
+
+        if (response?.products?.length > 0) {
+            products = response.products;
+            pagination = response.pagination;
+        }
+    } catch (error) {
+        console.error("SSR fetch error:", error);
+    }
+
+    return {
+        props: {
+            initialProducts: products,
+            initialPagination: pagination,
+        },
+    };
 }
