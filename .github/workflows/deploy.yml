@@ -20,11 +20,11 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no digitaledge@92.205.110.175 "
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
           export PATH=\"\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\" &&
             cd ${{ secrets.PROJECT_PATH }} &&
             echo '✅ Writing .env file...' &&
-            printf \"%s\" '${{ secrets.ENV_FILE }}' > .env &&
+            sudo printf \"%s\" '${{ secrets.ENV_FILE }}' > .env &&
           echo '✅ Pulling latest code...' &&
            sudo git pull  &&
 
