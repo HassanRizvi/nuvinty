@@ -34,6 +34,10 @@ const Endpoints = {
         getProducts: (search = '', page = 1, limit = 12, category = '', brand = '', condition = '', size = '', location = '', gender = '', price = '') => ({
             url: `${BaseUrl}/product?search=${encodeURIComponent(search)}&page=${page}&limit=${limit}&category=${category}&brand=${brand}&condition=${condition}&size=${size}&location=${location}&gender=${gender}&price=${price}`,
             method: "GET"
+        }),
+        getProductById: (productId) => ({
+            url: `${BaseUrl}/product/getById?id=${productId}`,
+            method: "GET"
         })
     },
     queries: {
