@@ -1,0 +1,41 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          export PATH=\"\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\" &&
+            cd ${{ secrets.PROJECT_PATH }} &&
+            echo '✅ Writing .env file...' &&
+            printf \"%s\" '${{ secrets.ENV_FILE }}' > .env &&
+          echo '✅ Pulling latest code...' &&
+           sudo git pull  &&
+
+          echo '✅ Installing dev dependencies...' &&
+           sudo npm i --force &&
+
+          echo '✅ Building project...' &&
+          sudo npm run build &&
+
+         
+
+          echo '✅ Restarting App...' &&
+          sudo pm2 reload all
+          "
