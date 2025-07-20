@@ -7,6 +7,7 @@ import Layout from "@/components/layout"
 import { ProductInterface } from "@/types/productInterface"
 import { featchData, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
+import Link from "next/link"
 
 interface PaginationInfo {
     currentPage: number
@@ -93,6 +94,9 @@ export default function Shop({
                         setSavedProducts(new Set(user.likedProducts))
                     }
                 }
+            } else {
+                // If no user is logged in, clear saved products
+                setSavedProducts(new Set())
             }
         }
         fetchFav()
@@ -332,9 +336,9 @@ export default function Shop({
             <div className="bg-[#fefdfb] px-4 md:px-10 py-6 border-b border-[#d4c4b0]">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-wrap gap-6">
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Category:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleCategoryChange(e)} value={category}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Category:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleCategoryChange(e)} value={category}>
                                 <option value="">All Categories</option>
                                 <option value="Shoes">Shoes</option>
                                 <option value="Clothes">Clothes</option>
@@ -346,9 +350,9 @@ export default function Shop({
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Brand:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleBrandChange(e)} value={brand}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Brand:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleBrandChange(e)} value={brand}>
                                 <option value="">All Brands</option>
                                 <option value="Samsung">Samsung</option>
                                 <option value="Jordan">Jordan</option>
@@ -360,9 +364,9 @@ export default function Shop({
                                 <option value="Vans">Vans</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
                                 <option value="">Any Condition</option>
                                 <option value="New">New</option>
                                 <option value="Open Box">Open Box</option>
@@ -371,35 +375,38 @@ export default function Shop({
                                 <option value="Used">Used</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Size:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
-                                <option value="">Any Condition</option>
-                                <option value="Used">Jordan</option>
-                                <option value="Preowned">Nike</option>
-                                <option value="Very Good">Adidas</option>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Size:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
+                                <option value="">Any Size</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Location:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Location:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
                                 <option value="">Any Location</option>
                                 <option value="US">US</option>
                                 <option value="UK">UK</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
                                 <option value="">Any Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Unisex">Unisex</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
+                        <div className="flex items-center gap-3 w-40">
+                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span> */}
+                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
                                 <option value="">Any Price</option>
                                 <option value="0-200">Under $200</option>
                                 <option value="200-400">$200 - $400</option>
@@ -460,7 +467,7 @@ export default function Shop({
             {/* Products */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{currentPagination.totalProducts} results</h1>
+                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : "All"} `}</h1>
                     {currentPagination.totalProducts === 0 && (
                         <div className="text-center text-lg text-[#6b5b4f] font-body h-32 flex items-center justify-center">No products found</div>
                     )}
@@ -471,35 +478,33 @@ export default function Shop({
                         {currentProducts.map((product: ProductInterface) => (
                             <div
                                 key={product._id}
-                                onClick={() => openProductDetail(product)}
-                                className={`bg-white rounded-xl overflow-hidden shadow-sm border border-[#d4c4b0] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer card-luxury ${viewMode === "list" ? "flex flex-row h-40" : ""
+                                className={`bg-white px-2 rounded-xl overflow-hidden shadow-sm border border-[#d4c4b0] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer card-luxury ${viewMode === "list" ? "flex flex-row h-40" : ""
                                     }`}
                             >
                                 <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "h-80"}`}>
-                                    {/* Heart Save Button */}
-                                    <button
-                                        onClick={(e) => toggleSaveProduct(product._id, e)}
-                                        className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
-                                            ? "bg-red-500 text-white shadow-lg"
-                                            : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
-                                            }`}
-                                    >
-                                        <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
-                                    </button>
+                                    {/* Heart Save Button - Only show if user is logged in */}
+                                    {handleGetUser() && (
+                                        <button
+                                            onClick={(e) => toggleSaveProduct(product._id, e)}
+                                            className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
+                                                ? "bg-red-500 text-white shadow-lg"
+                                                : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
+                                                }`}
+                                        >
+                                            <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
+                                        </button>
+                                    )}
 
-                                    <div
-                                        className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors"
-                                        onClick={(e) => openFullScreenImage(product.images[0], product, e)}
-                                    >
+                                    <Link href={`/product/${product._id}`} className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors">
                                         <img
                                             src={product.images[0] || "/placeholder.svg"}
                                             alt={product.name}
                                             className="w-full h-full object-contain bg-white"
                                         />
-                                    </div>
+                                    </Link>
                                 </div>
 
-                                <div className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
+                                <Link href={`/product/${product._id}`} className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
                                     <div className="text-xs text-[#8a7960] uppercase tracking-wide mb-2 font-luxury">{product.brand} {product._id}</div>
                                     <h3
                                         className={`text-[#2c1810] font-medium mb-2 line-clamp-2 font-body ${viewMode === "list" ? "text-lg" : "text-base"
@@ -513,7 +518,7 @@ export default function Shop({
                                         {product?.price ? product.price : "100"} {product?.currency ? product.currency : ""}
                                     </div>
                                     <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • {product.location ?? ""}</div>
-                                </div>
+                                </Link>
                             </div>
                         ))}
                     </div>
@@ -597,181 +602,6 @@ export default function Shop({
                     )}
                 </div>
             </div>
-
-            {/* Full Screen Product Modal */}
-            {fullScreenImage && selectedProduct && (
-                <div className="fixed inset-0 bg-white z-[60] flex md:flex-row flex-col">
-                    {/* Close Button */}
-                    <button
-                        onClick={closeFullScreenImage}
-                        className="absolute top-4 left-4 w-10 h-10 bg-black bg-opacity-20 rounded-full flex items-center justify-center z-10 hover:bg-opacity-30 transition-colors text-black"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-
-                    {/* Main Image */}
-                    <div className="flex-1 bg-[#f4f0eb] flex items-center justify-center p-8">
-                        <img
-                            src={fullScreenImage || "/placeholder.svg"}
-                            alt={selectedProduct.name}
-                            className="max-w-full max-h-full object-contain"
-                        />
-                    </div>
-
-                    {/* Product Details Sidebar */}
-                    <div className="w-100 md:w-96 bg-white p-6 overflow-y-auto border-l border-[#d4c4b0] flex flex-col">
-                        {/* Price */}
-                        <div className="text-right mb-4">
-                            <div className="text-2xl font-luxury font-semibold text-[#2c1810]">{selectedProduct.price ? selectedProduct.price : "100"} {selectedProduct.currency ? selectedProduct.currency : ""}</div>
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="mb-6">
-                            <h2 className="text-lg font-luxury font-medium text-[#2c1810] mb-1">
-                                {selectedProduct.name}
-                            </h2>
-                        </div>
-                        {/* Brand */}
-                        <div className="mb-6">
-                            <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">Brand</h4>
-                            <p className="text-sm text-[#2c1810] font-body">{selectedProduct.brand}</p>
-                        </div>
-
-                        {/* Product Thumbnails */}
-                        <div className="mb-6">
-                            <div className="grid grid-cols-4 gap-2">
-                                {selectedProduct.images.map((image, index) => (
-                                    <div
-                                        key={index}
-                                        onClick={() => { setFullScreenImage(image) }}
-                                        className={`aspect-square bg-[#f4f0eb] rounded border-2 cursor-pointer hover:border-[#a67c52] transition-colors ${image === fullScreenImage ? "border-[#a67c52]" : "border-[#d4c4b0]"
-                                            }`}
-                                    >
-                                        <img
-                                            src={image || "/placeholder.svg"}
-                                            alt={`View ${index}`}
-                                            className="w-full h-full object-cover rounded"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Size Selection */}
-                        <div className="mb-6">
-                        </div>
-
-                        {/* Seller Info */}
-                        {selectedProduct.type && (
-                            <div className="mb-6 p-3 bg-[#f4f0eb] rounded">
-                                <div className="text-sm font-luxury font-medium text-[#a67c52]">{selectedProduct.type}</div>
-                                <div className="text-xs text-[#6b5b4f] font-body">Verified authentic items</div>
-                            </div>
-                        )}
-
-                        {/* Location */}
-                        <div className="mb-6">
-                            <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">LOCATION</h4>
-                            <p className="text-sm text-[#2c1810] font-body">{selectedProduct.location}</p>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="mt-auto space-y-4">
-                            <button
-                                onClick={() => window.open(selectedProduct.url, '_blank')}
-                                className="w-full bg-[#2c1810] text-white py-3 px-6 rounded font-luxury font-medium hover:bg-[#1a0f08] transition-colors flex items-center justify-center gap-2"
-                            >
-                                <span className="text-lg">🛒</span>
-                                {selectedProduct.type}
-                            </button>
-
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        toggleSaveProduct(selectedProduct._id, e)
-                                    }}
-                                    className={`flex-1 border-2 rounded py-2 px-4 flex items-center justify-center transition-colors ${savedProducts.has(selectedProduct._id)
-                                        ? "border-red-500 text-red-500 bg-red-50"
-                                        : "border-[#d4c4b0] text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52]"
-                                        }`}
-                                >
-                                    <Heart className={`w-5 h-5 ${savedProducts.has(selectedProduct._id) ? "fill-current" : ""}`} />
-                                </button>
-                                <button onClick={() => window.open(selectedProduct.url, '_blank')} className="flex-1 border-2 border-[#d4c4b0] rounded py-2 px-4 flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors">
-                                    ↗
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Product Detail Modal */}
-            {selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-                    <div className="bg-[#fefdfb] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row relative">
-                        <button
-                            onClick={closeProductDetail}
-                            className="absolute top-4 left-4 w-10 h-10 bg-white bg-opacity-90 rounded-full flex items-center justify-center z-10 hover:bg-opacity-100 transition-colors"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-
-                        <div className="flex-1 relative min-h-[300px] md:min-h-[600px]">
-                            <div
-                                className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer"
-                                onClick={(e) => openFullScreenImage(selectedProduct.images[1], selectedProduct, e)}
-                            >
-                                <img
-                                    src={selectedProduct.images[1] || "/placeholder.svg"}
-                                    alt={selectedProduct.name}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex-1 p-8 overflow-y-auto">
-                            <div className="text-3xl font-semibold text-[#a67c52] mb-4 font-luxury">{"100"}</div>
-                            <h2 className="text-2xl text-[#2c1810] mb-2 font-luxury">
-                                {selectedProduct.brand} {selectedProduct.name}
-                            </h2>
-                            <p className="text-[#6b5b4f] mb-8 font-body">Authentic luxury handbag</p>
-
-                            {selectedProduct.type && (
-                                <div className="mb-6 p-3 bg-[#f4f0eb] rounded-lg">
-                                    <div className="text-sm font-medium text-[#a67c52] font-luxury">{selectedProduct.type}</div>
-                                    <div className="text-xs text-[#6b5b4f] font-body">Verified authentic items</div>
-                                </div>
-                            )}
-
-                            <div className="mb-8">
-                                <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">Shipping</h4>
-                                <p className="text-[#2c1810] font-body">Direct Shipping from United Kingdom</p>
-                            </div>
-
-                            <div className="flex gap-4">
-                                <button className="flex-1 bg-[#2c1810] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#1a0f08] transition-colors flex items-center justify-center gap-2 btn-luxury">
-                                    {/* <span>🛒</span> */}
-                                    Testing
-                                </button>
-                                <button
-                                    onClick={(e) => toggleSaveProduct(selectedProduct._id, e)}
-                                    className={`w-12 h-12 border-2 rounded-lg flex items-center justify-center transition-colors ${savedProducts.has(selectedProduct._id)
-                                        ? "border-red-500 text-red-500 bg-red-50"
-                                        : "border-[#d4c4b0] text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52]"
-                                        }`}
-                                >
-                                    <Heart className={`w-5 h-5 ${savedProducts.has(selectedProduct._id) ? "fill-current" : ""}`} />
-                                </button>
-                                <button className="w-12 h-12 border-2 border-[#d4c4b0] rounded-lg flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors">
-                                    ↗
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </Layout>
     )
 }

@@ -8,6 +8,7 @@ import Layout from "@/components/layout"
 import { ProductInterface } from "@/types/productInterface"
 import { featchData, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
+import Link from "next/link"
 
 interface PaginationInfo {
     currentPage: number
@@ -52,6 +53,9 @@ export default function Saved({
                         setSavedProducts(new Set(user.likedProducts))
                     }
                 }
+            } else {
+                // If no user is logged in, clear saved products
+                setSavedProducts(new Set())
             }
         }
         fetchFav()
@@ -258,35 +262,33 @@ export default function Saved({
                         {currentProducts.map((product: ProductInterface) => (
                             <div
                                 key={product._id}
-                                onClick={() => openProductDetail(product)}
                                 className={`bg-white rounded-xl overflow-hidden shadow-sm border border-[#d4c4b0] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer card-luxury ${viewMode === "list" ? "flex flex-row h-40" : ""
                                     }`}
                             >
                                 <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "h-80"}`}>
-                                    {/* Heart Save Button */}
-                                    <button
-                                        onClick={(e) => toggleSaveProduct(product._id, e)}
-                                        className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
-                                            ? "bg-red-500 text-white shadow-lg"
-                                            : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
-                                            }`}
-                                    >
-                                        <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
-                                    </button>
+                                    {/* Heart Save Button - Only show if user is logged in */}
+                                    {handleGetUser() && (
+                                        <button
+                                            onClick={(e) => toggleSaveProduct(product._id, e)}
+                                            className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
+                                                ? "bg-red-500 text-white shadow-lg"
+                                                : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
+                                                }`}
+                                        >
+                                            <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
+                                        </button>
+                                    )}
 
-                                    <div
-                                        className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors"
-                                        onClick={(e) => openFullScreenImage(product.images[0], product, e)}
-                                    >
+                                    <Link href={`/product/${product._id}`} className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors">
                                         <img
                                             src={product.images[0] || "/placeholder.svg"}
                                             alt={product.name}
                                             className="w-full h-full object-contain bg-white"
                                         />
-                                    </div>
+                                    </Link>
                                 </div>
 
-                                <div className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
+                                <Link href={`/product/${product._id}`} className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
                                     <div className="text-xs text-[#8a7960] uppercase tracking-wide mb-2 font-luxury">{product.brand}</div>
                                     <h3
                                         className={`text-[#2c1810] font-medium mb-2 line-clamp-2 font-body ${viewMode === "list" ? "text-lg" : "text-base"
@@ -300,7 +302,7 @@ export default function Saved({
                                         {"100"}
                                     </div>
                                     <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • United Kingdom</div>
-                                </div>
+                                </Link>
                             </div>
                         ))}
                     </div>
