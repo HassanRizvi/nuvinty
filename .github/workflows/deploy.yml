@@ -25,6 +25,9 @@ jobs:
             cd ${{ secrets.PROJECT_PATH }} &&
             echo '✅ Writing .env file...' &&
             echo "${{ secrets.ENV_FILE }}" | sudo tee .env > /dev/null  &&
+            echo '✅ Resetting git...' &&
+            git reset HEAD --hard &&
+
             echo '✅ Pulling latest code...' &&
            sudo git pull  &&
 
