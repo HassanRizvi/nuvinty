@@ -252,6 +252,7 @@ export default function Saved({
             </div>
 
             {/* Products */}
+            {products.length > 0 ? (
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
 
@@ -262,7 +263,7 @@ export default function Saved({
                         {currentProducts.map((product: ProductInterface) => (
                             <div
                                 key={product._id}
-                                className={`bg-white rounded-xl overflow-hidden shadow-sm border border-[#d4c4b0] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer card-luxury ${viewMode === "list" ? "flex flex-row h-40" : ""
+                                className={`px-2 bg-white rounded-xl overflow-hidden shadow-sm border border-[#d4c4b0] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer card-luxury ${viewMode === "list" ? "flex flex-row h-40" : ""
                                     }`}
                             >
                                 <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "h-80"}`}>
@@ -385,186 +386,9 @@ export default function Saved({
                     )}
                 </div>
             </div>
-
-            {/* Full Screen Product Modal */}
-            {fullScreenImage && selectedProduct && (
-                <div className="fixed inset-0 bg-white z-[60] flex">
-                    {/* Close Button */}
-                    <button
-                        onClick={closeFullScreenImage}
-                        className="absolute top-4 left-4 w-10 h-10 bg-black bg-opacity-20 rounded-full flex items-center justify-center z-10 hover:bg-opacity-30 transition-colors text-black"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-
-                    {/* Main Image */}
-                    <div className="flex-1 bg-[#f4f0eb] flex items-center justify-center p-8">
-                        <img
-                            src={fullScreenImage || "/placeholder.svg"}
-                            alt={selectedProduct.name}
-                            className="max-w-full max-h-full object-contain"
-                        />
-                    </div>
-
-                    {/* Product Details Sidebar */}
-                    <div className="w-80 lg:w-96 bg-white p-6 overflow-y-auto border-l border-[#d4c4b0] flex flex-col">
-                        {/* Price */}
-                        <div className="text-right mb-4">
-                            <div className="text-2xl font-luxury font-semibold text-[#2c1810]">{"100"}</div>
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="mb-6">
-                            <h2 className="text-lg font-luxury font-medium text-[#2c1810] mb-1">
-                                {selectedProduct.name}
-                            </h2>
-                        </div>
-                        {/* Brand */}
-                        <div className="mb-6">
-                            <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">Brand</h4>
-                            <p className="text-sm text-[#2c1810] font-body">{selectedProduct.brand}</p>
-                        </div>
-
-                        {/* Product Thumbnails */}
-                        <div className="mb-6">
-                            <div className="grid grid-cols-4 gap-2">
-                                {selectedProduct.images.map((image, index) => (
-                                    <div
-                                        key={index}
-                                        onClick={() => { setFullScreenImage(image) }}
-                                        className={`aspect-square bg-[#f4f0eb] rounded border-2 cursor-pointer hover:border-[#a67c52] transition-colors ${image === fullScreenImage ? "border-[#a67c52]" : "border-[#d4c4b0]"
-                                            }`}
-                                    >
-                                        <img
-                                            src={image || "/placeholder.svg"}
-                                            alt={`View ${index}`}
-                                            className="w-full h-full object-cover rounded"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Size Selection */}
-                        <div className="mb-6">
-                        </div>
-
-                        {/* Seller Info */}
-                        {selectedProduct.type && (
-                            <div className="mb-6 p-3 bg-[#f4f0eb] rounded">
-                                <div className="text-sm font-luxury font-medium text-[#a67c52]">{selectedProduct.type}</div>
-                                <div className="text-xs text-[#6b5b4f] font-body">Verified authentic items</div>
-                            </div>
-                        )}
-
-                        {/* Location */}
-                        <div className="mb-6">
-                            <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">LOCATION</h4>
-                            <p className="text-sm text-[#2c1810] font-body">{selectedProduct.location}</p>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="mt-auto space-y-4">
-                            <button
-                                onClick={() => window.open(selectedProduct.url, '_blank')}
-                                className="w-full bg-[#2c1810] text-white py-3 px-6 rounded font-luxury font-medium hover:bg-[#1a0f08] transition-colors flex items-center justify-center gap-2"
-                            >
-                                <span className="text-lg">🛒</span>
-                                {selectedProduct.type}
-                            </button>
-
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        toggleSaveProduct(selectedProduct._id, e)
-                                    }}
-                                    className={`flex-1 border-2 rounded py-2 px-4 flex items-center justify-center transition-colors ${savedProducts.has(selectedProduct._id)
-                                        ? "border-red-500 text-red-500 bg-red-50"
-                                        : "border-[#d4c4b0] text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52]"
-                                        }`}
-                                >
-                                    <Heart className={`w-5 h-5 ${savedProducts.has(selectedProduct._id) ? "fill-current" : ""}`} />
-                                </button>
-                                <button onClick={() => window.open(selectedProduct.url, '_blank')} className="flex-1 border-2 border-[#d4c4b0] rounded py-2 px-4 flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors">
-                                    ↗
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Product Detail Modal */}
-            {selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-                    <div className="bg-[#fefdfb] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row relative">
-                        <button
-                            onClick={closeProductDetail}
-                            className="absolute top-4 left-4 w-10 h-10 bg-white bg-opacity-90 rounded-full flex items-center justify-center z-10 hover:bg-opacity-100 transition-colors"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-
-                        <div className="flex-1 relative min-h-[300px] md:min-h-[600px]">
-                            <div
-                                className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer"
-                                onClick={(e) => openFullScreenImage(selectedProduct.images[0], selectedProduct, e)}
-                            >
-                                <img
-                                    src={selectedProduct.images[0] || "/placeholder.svg"}
-                                    alt={selectedProduct.name}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex-1 p-8 overflow-y-auto">
-                            <div className="text-3xl font-semibold text-[#a67c52] mb-4 font-luxury">{"100"}</div>
-                            <h2 className="text-2xl text-[#2c1810] mb-2 font-luxury">
-                                {selectedProduct.brand} {selectedProduct.name}
-                            </h2>
-                            <p className="text-[#6b5b4f] mb-8 font-body">Authentic luxury handbag</p>
-
-                            {/* {selectedProduct.seller && ( */}
-                            <div className="mb-6 p-3 bg-[#f4f0eb] rounded-lg">
-                                <div className="text-sm font-medium text-[#a67c52] font-luxury">{"seller"}</div>
-                                <div className="text-xs text-[#6b5b4f] font-body">Verified authentic items</div>
-                            </div>
-                            {/* )} */}
-
-                            <div className="mb-8">
-                                <h4 className="text-xs text-[#6b5b4f] uppercase tracking-wide mb-1 font-luxury">Shipping</h4>
-                                <p className="text-[#2c1810] font-body">Direct Shipping from United Kingdom</p>
-                            </div>
-
-                            <div className="mb-8">
-                                <div className="flex items-center gap-2 text-[#6b5b4f] mb-2">
-                                    <Heart className="w-4 h-4" />
-                                    <span className="text-sm font-body">{"100"} people liked this</span>
-                                </div>
-                            </div>
-
-                            <div className="flex gap-4">
-                                <button className="flex-1 bg-[#2c1810] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#1a0f08] transition-colors flex items-center justify-center gap-2 btn-luxury">
-                                    <span>🛒</span>
-                                    View on Platform
-                                </button>
-                                <button
-                                    onClick={(e) => toggleSaveProduct(selectedProduct._id, e)}
-                                    className={`w-12 h-12 border-2 rounded-lg flex items-center justify-center transition-colors ${savedProducts.has(selectedProduct._id)
-                                        ? "border-red-500 text-red-500 bg-red-50"
-                                        : "border-[#d4c4b0] text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52]"
-                                        }`}
-                                >
-                                    <Heart className={`w-5 h-5 ${savedProducts.has(selectedProduct._id) ? "fill-current" : ""}`} />
-                                </button>
-                                <button className="w-12 h-12 border-2 border-[#d4c4b0] rounded-lg flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors">
-                                    ↗
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            ) : (
+                <div className="mt-40 mb-40 flex justify-center">
+                    <div className="text-[#6b5b4f] font-body">No products found</div>
                 </div>
             )}
         </Layout>

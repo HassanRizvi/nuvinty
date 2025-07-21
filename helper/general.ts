@@ -30,6 +30,7 @@ const handleStoreUser = (data: {
 
 const handleGetUser = () => {
     const user = getCookie("user");
+    console.log("user from Get User From cookie ", user)
     return user ? JSON.parse(user) : null;
 };
 

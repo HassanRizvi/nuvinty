@@ -64,7 +64,6 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     try {
 
       const response = await featchData(Endpoints.queries.create, body)
-      console.log("Response ", response)
       if (response.status === 200) {
         alert("Query added successfully")
         setIsLoading(false)
@@ -188,7 +187,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
 
 
         {/* Social Login Buttons */}
-        {mode !== "query" && (
+        {/* {mode !== "query" && (
           <div className="space-y-3 mb-6">
             <button
               onClick={() => handleSocialLogin("Google")}
@@ -224,16 +223,16 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
               </svg>
               <span className="text-[#2c1810] font-medium">Continue with Facebook</span>
             </button>
-          </div>)}
+          </div>)} */}
 
         {/* Divider */}
-        {mode !== "query" && (
+        {/* {mode !== "query" && (
           <div className="flex items-center gap-4 mb-6">
             <div className="flex-1 h-px bg-[#d4c4b0]"></div>
             <span className="text-sm text-[#6b5b4f] font-body">or</span>
             <div className="flex-1 h-px bg-[#d4c4b0]"></div>
           </div>
-        )}
+        )} */}
         {/* Email Form */}
         <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           {mode === "signup" && (

@@ -1,13 +1,14 @@
 "use client"
 import { useSearchParams, useRouter } from 'next/navigation'
-import React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
+import { debounce } from "lodash"
 import { Grid, List, X, Heart, ChevronLeft, ChevronRight } from "lucide-react"
 import Layout from "@/components/layout"
 import { ProductInterface } from "@/types/productInterface"
 import { featchData, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
 import Link from "next/link"
+import FiltersData from "@/categories.json"
 
 interface PaginationInfo {
     currentPage: number
@@ -18,13 +19,28 @@ interface PaginationInfo {
     limit: number
 }
 
+interface Filters {
+    q?: string;
+    category?: string;
+    brand?: string;
+    condition?: string;
+    size?: string;
+    location?: string;
+    gender?: string;
+    price?: string;
+}
+
+interface ShopProps {
+    products: ProductInterface[];
+    pagination: PaginationInfo;
+    initialFilters?: Filters;
+}
+
 export default function Shop({
     products,
-    pagination
-}: {
-    products: ProductInterface[]
-    pagination: PaginationInfo
-}) {
+    pagination,
+    initialFilters = {}
+}: ShopProps) {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedProduct, setSelectedProduct] = useState<ProductInterface | null>(null)
     const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
@@ -33,14 +49,14 @@ export default function Shop({
     const [currentProducts, setCurrentProducts] = useState<ProductInterface[]>(products)
     const [currentPagination, setCurrentPagination] = useState<PaginationInfo>(pagination)
     const [isLoading, setIsLoading] = useState(false)
-    const [searchQuery, setSearchQuery] = useState("")
-    const [category, setCategory] = useState("")
-    const [brand, setBrand] = useState("")
-    const [condition, setCondition] = useState("")
-    const [size, setSize] = useState("")
-    const [location, setLocation] = useState("")
-    const [gender, setGender] = useState("")
-    const [price, setPrice] = useState("")
+    const [searchQuery, setSearchQuery] = useState(initialFilters.q || "")
+    const [category, setCategory] = useState(initialFilters.category || "")
+    const [brand, setBrand] = useState(initialFilters.brand || "")
+    const [condition, setCondition] = useState(initialFilters.condition || "")
+    const [size, setSize] = useState(initialFilters.size || "")
+    const [location, setLocation] = useState(initialFilters.location || "")
+    const [gender, setGender] = useState(initialFilters.gender || "")
+    const [price, setPrice] = useState(initialFilters.price || "")
     const searchParams = useSearchParams()
     const router = useRouter()
 
@@ -66,18 +82,6 @@ export default function Shop({
         setLocation(location || "")
         setGender(gender || "")
         setPrice(price || "")
-        const qVal = q || ""
-        const categoryVal = category || ""
-        const brandVal = brand || ""
-        const conditionVal = condition || ""
-        const sizeVal = size || ""
-        const locationVal = location || ""
-        const genderVal = gender || ""
-        const priceVal = price || ""
-        // if (qVal || categoryVal || brandVal || conditionVal || sizeVal || locationVal || genderVal || priceVal) {
-        //     fetchPage(1, qVal, categoryVal, brandVal, conditionVal, sizeVal, locationVal, genderVal, priceVal)
-        // }
-
         const fetchFav = async () => {
             const user = handleGetUser()
             if (user && user._id) {
@@ -108,18 +112,29 @@ export default function Shop({
     //     setCurrentPagination(pagination)
     // }, [products, pagination])
 
-    const fetchPage = async (page: number, search: string = searchQuery, category: string = "", brand: string = "", condition: string = "", size: string = "", location: string = "", gender: string = "", price: string = "") => {
-        setIsLoading(true)
-        try {
-            const response = await GetData(Endpoints.product.getProducts(search, page, currentPagination.limit, category, brand, condition, size, location, gender, price))
-            if (response.products) {
-                console.log("Products available :", response.products.length)
-                if (response.products.length != 0) {
-                    setCurrentProducts(response.products)
-                    setCurrentPagination(response.pagination)
+    const debouncedFetchPage = useMemo(
+        () => debounce(async (page: number, search: string = searchQuery, category: string = "", brand: string = "", condition: string = "", size: string = "", location: string = "", gender: string = "", price: string = "") => {
+            setIsLoading(true)
+            try {
+                const response = await GetData(Endpoints.product.getProducts(search, page, currentPagination.limit, category, brand, condition, size, location, gender, price))
+                if (response.products) {
+                    console.log("Products available :", response.products.length)
+                    if (response.products.length != 0) {
+                        setCurrentProducts(response.products)
+                        setCurrentPagination(response.pagination)
+                    } else {
+                        console.log("No products available")
+                        setCurrentProducts([])
+                        setCurrentPagination({
+                            currentPage: 1,
+                            totalPages: 1,
+                            totalProducts: 0,
+                            hasNextPage: false,
+                            hasPrevPage: false,
+                            limit: 12
+                        })
+                    }
                 } else {
-                    console.log("Response ", response)
-                    console.log("No products available")
                     setCurrentProducts([])
                     setCurrentPagination({
                         currentPage: 1,
@@ -130,25 +145,18 @@ export default function Shop({
                         limit: 12
                     })
                 }
-                // setCurrentProducts(response.products)
-                // setCurrentPagination(response.pagination)
-            } else {
-                setCurrentProducts([])
-                setCurrentPagination({
-                    currentPage: 1,
-                    totalPages: 1,
-                    totalProducts: 0,
-                    hasNextPage: false,
-                    hasPrevPage: false,
-                    limit: 12
-                })
+            } catch (error) {
+                console.error("Error fetching page:", error)
+            } finally {
+                setIsLoading(false)
             }
-        } catch (error) {
-            console.error("Error fetching page:", error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
+        }, 300),
+        [currentPagination.limit]
+    )
+
+    const fetchPage = useCallback((...args: Parameters<typeof debouncedFetchPage>) => {
+        debouncedFetchPage(...args)
+    }, [debouncedFetchPage])
 
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= currentPagination.totalPages) {
@@ -163,6 +171,46 @@ export default function Shop({
         setSearchQuery(query)
         await fetchPage(1, query, category, brand, condition, size, location, gender, price)
     }
+
+    const debouncedToggleSave = useMemo(
+        () => debounce(async (userId: string, productId: string) => {
+            try {
+                const response = await featchData(Endpoints.user.addToFav, {
+                    userId,
+                    productId
+                })
+
+                if (response.status === 200) {
+                    console.log("Product toggled successfully")
+                } else {
+                    // Revert the optimistic update if the API call failed
+                    setSavedProducts((prev) => {
+                        const newSet = new Set(prev)
+                        if (newSet.has(productId)) {
+                            newSet.delete(productId)
+                        } else {
+                            newSet.add(productId)
+                        }
+                        return newSet
+                    })
+                    console.error("Failed to toggle product")
+                }
+            } catch (error) {
+                // Revert the optimistic update if the API call failed
+                setSavedProducts((prev) => {
+                    const newSet = new Set(prev)
+                    if (newSet.has(productId)) {
+                        newSet.delete(productId)
+                    } else {
+                        newSet.add(productId)
+                    }
+                    return newSet
+                })
+                console.error("Error toggling product:", error)
+            }
+        }, 300),
+        []
+    )
 
     const toggleSaveProduct = async (productId: string, e: React.MouseEvent) => {
         e.stopPropagation()
@@ -184,40 +232,7 @@ export default function Shop({
             return newSet
         })
 
-        try {
-            const response = await featchData(Endpoints.user.addToFav, {
-                userId: user._id,
-                productId: productId
-            })
-
-            if (response.status === 200) {
-                console.log("Product toggled successfully")
-            } else {
-                // Revert the optimistic update if the API call failed
-                setSavedProducts((prev) => {
-                    const newSet = new Set(prev)
-                    if (newSet.has(productId)) {
-                        newSet.delete(productId)
-                    } else {
-                        newSet.add(productId)
-                    }
-                    return newSet
-                })
-                console.error("Failed to toggle product")
-            }
-        } catch (error) {
-            // Revert the optimistic update if the API call failed
-            setSavedProducts((prev) => {
-                const newSet = new Set(prev)
-                if (newSet.has(productId)) {
-                    newSet.delete(productId)
-                } else {
-                    newSet.add(productId)
-                }
-                return newSet
-            })
-            console.error("Error toggling product:", error)
-        }
+        debouncedToggleSave(user._id, productId)
     }
 
     const openProductDetail = (product: ProductInterface) => {
@@ -340,13 +355,9 @@ export default function Shop({
                             {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Category:</span> */}
                             <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleCategoryChange(e)} value={category}>
                                 <option value="">All Categories</option>
-                                <option value="Shoes">Shoes</option>
-                                <option value="Clothes">Clothes</option>
-                                <option value="Accessories">Accessories</option>
-                                <option value="Jewelry">Jewelry</option>
-                                <option value="Home">Home</option>
-                                <option value="Beauty">Beauty</option>
-                                <option value="Electronics">Electronics</option>
+                                {FiltersData.map((category: any) => (
+                                    <option key={category.category} value={category.category}>{category.category}</option>
+                                ))}
                             </select>
                         </div>
 
@@ -354,14 +365,15 @@ export default function Shop({
                             {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Brand:</span> */}
                             <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleBrandChange(e)} value={brand}>
                                 <option value="">All Brands</option>
-                                <option value="Samsung">Samsung</option>
-                                <option value="Jordan">Jordan</option>
-                                <option value="Nike">Nike</option>
-                                <option value="Adidas">Adidas</option>
-                                <option value="Puma">Puma</option>
-                                <option value="Reebok">Reebok</option>
-                                <option value="Converse">Converse</option>
-                                <option value="Vans">Vans</option>
+                                {category ?
+                                    FiltersData.find((cat) => cat.category === category)?.brands.map((brand) => (
+                                        <option key={brand} value={brand}>{brand}</option>
+                                    ))
+                                    :
+                                    FiltersData.flatMap((cat) => cat.brands).map((brand) => (
+                                        <option key={brand} value={brand}>{brand}</option>
+                                    ))
+                                }
                             </select>
                         </div>
                         <div className="flex items-center gap-3 w-40">
@@ -375,18 +387,19 @@ export default function Shop({
                                 <option value="Used">Used</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3 w-40">
-                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Size:</span> */}
-                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
-                                <option value="">Any Size</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                                <option value="XXL">XXL</option>
-                                <option value="XXXL">XXXL</option>
-                            </select>
-                        </div>
+                        {FiltersData.find((cat) => cat.category === category)?.haveSize && (
+                            <div className="flex items-center gap-3 w-40">
+                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
+                                    <option value="">Any Size</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                    <option value="XXL">XXL</option>
+                                    <option value="XXXL">XXXL</option>
+                                </select>
+                            </div>
+                        )}
                         <div className="flex items-center gap-3 w-40">
                             {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Location:</span> */}
                             <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
@@ -395,15 +408,17 @@ export default function Shop({
                                 <option value="UK">UK</option>
                             </select>
                         </div>
-                        <div className="flex items-center gap-3 w-40">
-                            {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
-                            <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
-                                <option value="">Any Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Unisex">Unisex</option>
-                            </select>
-                        </div>
+                        {FiltersData.find((cat) => cat.category === category)?.haveGender && (
+                            <div className="flex items-center gap-3 w-40">
+                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
+                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
+                                    <option value="">Any Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Unisex">Unisex</option>
+                                </select>
+                            </div>
+                        )}
                         <div className="flex items-center gap-3 w-40">
                             {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span> */}
                             <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
@@ -414,17 +429,6 @@ export default function Shop({
                                 <option value="600+">$600+</option>
                             </select>
                         </div>
-
-                        {/* <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
-                            <select className="px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body">
-                                <option value="">Any Price</option>
-                                <option value="0-200">Under £200</option>
-                                <option value="200-400">£200 - £400</option>
-                                <option value="400-600">£400 - £600</option>
-                                <option value="600+">£600+</option>
-                            </select>
-                        </div> */}
                     </div>
                 </div>
             </div>

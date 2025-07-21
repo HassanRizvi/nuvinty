@@ -1,0 +1,57 @@
+[
+    {
+        "category": "Watches",
+        "brands": [
+            "Rolex",
+            "Omega",
+            "Tag Heuer",
+            "Casio"
+        ],
+        "haveSize": false,
+        "haveGender": true
+    },
+    {
+        "category": "Bags",
+        "brands": [
+            "Chanel",
+            "Gucci",
+            "Louis Vuitton",
+            "Prada"
+        ],
+        "haveSize": false,
+        "haveGender": true
+    },
+    {
+        "category": "Shoes",
+        "brands": [
+            "Nike",
+            "Adidas",
+            "Puma",
+            "Reebok"
+        ],
+        "haveSize": true,
+        "haveGender": true
+    },
+    {
+        "category": "Electronics",
+        "brands": [
+            "Apple",
+            "Samsung",
+            "Sony",
+            "LG"
+        ],
+        "haveSize": false,
+        "haveGender": false
+    },
+    {
+        "category": "Clothing",
+        "brands": [
+            "Zara",
+            "H&M",
+            "Uniqlo",
+            "Levi's"
+        ],
+        "haveSize": true,
+        "haveGender": true
+    }
+]

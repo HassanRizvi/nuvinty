@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { ArrowRight, Star, Shield, Truck, RefreshCw } from "lucide-react"
 import Layout from "@/components/layout"
+import Head from "next/head"
+import FiltersData from "@/categories.json"
 
 export default function HomePage() {
   return (
@@ -17,6 +19,7 @@ export default function HomePage() {
               </h1>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
+                  prefetch={true}
                   href="/shop"
                   className="bg-[#2c1810] text-[#fefdfb] px-8 py-4 font-luxury font-medium hover:bg-[#1a0f08] transition-colors inline-flex items-center justify-center gap-2 tracking-wide"
                 >
@@ -114,7 +117,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
-            {["Chanel", "Louis Vuitton", "Gucci", "Prada", "Hermès", "Dior", "Balenciaga", "Saint Laurent"].map(
+            {/* {FiltersData.brands.map(
               (brand) => (
                 <div
                   key={brand}
@@ -123,7 +126,21 @@ export default function HomePage() {
                   <div className="text-sm font-semibold text-[#a67c52]">{brand}</div>
                 </div>
               ),
-            )}
+            )} */}
+            {
+              FiltersData.flatMap((cat) => cat.brands)
+                .sort(() => Math.random() - 0.5) // Shuffle array randomly
+                .slice(0, 8) // Take first 8 items
+                .map((brand) => (
+                  <Link
+                    key={brand}
+                    href={`/shop?brand=${encodeURIComponent(brand)}`}
+                    className="bg-white rounded-lg p-6 text-center shadow-sm border border-[#d4c4b0] hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    <div className="text-sm font-semibold text-[#a67c52]">{brand}</div>
+                  </Link>
+                ))
+            }
           </div>
         </div>
       </section>
