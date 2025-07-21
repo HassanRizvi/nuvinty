@@ -23,7 +23,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
           export PATH=\"\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\" &&
             cd ${{ secrets.PROJECT_PATH }} &&
-            echo '✅ Writing .env file...' &&
+            echo '✅ Writing .env file...  ' &&
             echo "${{ secrets.ENV_FILE }}" | sudo tee .env > /dev/null  &&
             echo '✅ Resetting git...' &&
             sudo git reset HEAD --hard &&
