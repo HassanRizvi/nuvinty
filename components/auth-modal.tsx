@@ -301,18 +301,42 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
               <h1 className="text-sm text-[#6b5b4f] font-body cursor-pointer inline" onClick={() => {
                 document.getElementById("file")?.click()
               }}>Upload CSV File</h1>
+
               {data.length > 0 && (
-                <div className="relative flex items-center gap-2 flex-wrap bg-[#f0f0f0] p-2 rounded-lg border-radius-lg mt-3 overflow-y-auto max-h-[200px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-[#a67c52] [&::-webkit-scrollbar-track]:bg-[#f0f0f0]">
-                  <button 
+                <>
+                  <div className="flex justify-end relative">
+                    {data.filter(item => !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(item)).length > 0 && (
+                      <div className="absolute z-[100000] top-[3vw] right-[1vw] w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                        {data.filter(item => !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(item)).length}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => setData([])}
+                      className="text-[#6b5b4f] hover:text-[#a67c52] transition-colors"
+                    >
+                      <X size={16} className="text-[#6b5b4f] hover:text-[#a67c52] transition-colors" />
+                    </button>
+                  </div>
+                  <div className="relative flex items-center gap-2 flex-wrap bg-[#f0f0f0] p-2 rounded-lg border-radius-lg mt-3 overflow-y-auto max-h-[200px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-[#a67c52] [&::-webkit-scrollbar-track]:bg-[#f0f0f0]">
+                    {/* <button 
                     onClick={() => setData([])} 
-                    className="absolute top-2 right-2 text-[#6b5b4f] hover:text-[#a67c52] transition-colors"
+                    className="absolute z-100 top-[-2px] right-2 text-[#6b5b4f] hover:text-[#a67c52] transition-colors"
                   >
                     <X size={16} />
-                  </button>
-                  {data.map((item, index) => (
-                    <h6 key={index} className="text-sm text-[#6b5b4f] font-body p-2">{item}</h6>
-                  ))}
-                </div>
+                  </button> */}
+                    {data.map((item, index) => {
+                      const isValidUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(item);
+                      return (
+                        <h6
+                          key={index}
+                          className={`text-sm font-body p-2 ${isValidUrl ? 'text-[#6b5b4f]' : 'text-red-500'}`}
+                        >
+                          {item}
+                        </h6>
+                      );
+                    })}
+                  </div>
+                </>
               )}
               <input
                 id="file"

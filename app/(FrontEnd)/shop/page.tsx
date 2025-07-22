@@ -20,7 +20,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     price = "",
   } = searchParams || {};
 
-  const limit = 12;
+  const limit = 50;
   let products = [];
   let pagination = {
     currentPage: 1,

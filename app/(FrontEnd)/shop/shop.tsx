@@ -131,7 +131,7 @@ export default function Shop({
                             totalProducts: 0,
                             hasNextPage: false,
                             hasPrevPage: false,
-                            limit: 12
+                            limit: 50
                         })
                     }
                 } else {
@@ -142,7 +142,7 @@ export default function Shop({
                         totalProducts: 0,
                         hasNextPage: false,
                         hasPrevPage: false,
-                        limit: 12
+                        limit: 50
                     })
                 }
             } catch (error) {
@@ -622,7 +622,7 @@ export async function getServerSideProps(context: any) {
         price = "",
     } = context.query;
 
-    const limit = 12;
+    const limit = 50;
     let products = [];
     let pagination = {
         currentPage: 1,

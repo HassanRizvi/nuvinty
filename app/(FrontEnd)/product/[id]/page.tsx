@@ -13,6 +13,7 @@ interface PageProps {
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
+  const { id } = await params;
   const handleGetProduct = async (productId: string) => {
     try {
       const response = await GetData(Endpoints.product.getProductById(productId))
@@ -23,7 +24,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     }
   }
 
-  const product = await handleGetProduct(params.id)
+  const product = await handleGetProduct(id)
+  console.log("Fetched product:", product)
 
   if (!product || !product.data) {
     notFound()

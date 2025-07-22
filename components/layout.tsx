@@ -7,6 +7,7 @@ import Link from "next/link"
 import AuthModal from "./auth-modal"
 import { deleteCookie, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
+import { usePathname } from "next/navigation"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -44,13 +45,10 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
       setRole(response.data.role)
     }
   }
+  const pathname = usePathname();
   useEffect(() => {
-    if (window.location.pathname === "/shop") {
-      setIsSearchVisible(true)
-    } else {
-      setIsSearchVisible(false)
-    }
-  }, [window.location.pathname])
+    setIsSearchVisible(pathname === "/shop");
+  }, [pathname]);
   const openAuthModal = (mode: "login" | "signup" | "query") => {
     setAuthModal({ isOpen: true, mode })
   }
