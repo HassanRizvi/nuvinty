@@ -38,8 +38,24 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <>
-      {children}
-    </>
+    <html>
+      <head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JNWTCB4VX"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-0JNWTCB4VX');
+            `,
+          }}
+        />
+      </head>
+      <body>
+        {children}
+      </body>
+    </html>
   )
 }

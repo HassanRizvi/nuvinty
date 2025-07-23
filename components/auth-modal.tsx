@@ -5,7 +5,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
-import { featchData, handleStoreUser } from "@/helper/general"
+import { featchData, handleStoreUser,handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
 import { toast } from "sonner"
 
@@ -59,7 +59,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     setIsLoading(true)
     console.log("Data ", data)
     console.log("Query ", query)
-    const body = { query: data.length > 0 ? data : query }
+    const body = { query: data.length > 0 ? data : query, userId: handleGetUser()._id }
     console.log("Body ", body)
     try {
 
@@ -305,9 +305,9 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
               {data.length > 0 && (
                 <>
                   <div className="flex justify-end relative">
-                    {data.filter(item => !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(item)).length > 0 && (
+                    {data.filter(item => !/^https:\/\/api\.ebay\.com\/buy\/browse\/v1\/item_summary\/search\?[\w\-\+\=\[\]\{\}\,\.\&\:]*$/.test(item)).length > 0 && (
                       <div className="absolute z-[100000] top-[3vw] right-[1vw] w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
-                        {data.filter(item => !/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(item)).length}
+                        {data.filter(item => !/^https:\/\/api\.ebay\.com\/buy\/browse\/v1\/item_summary\/search\?[\w\-\+\=\[\]\{\}\,\.\&\:]*$/.test(item)).length}
                       </div>
                     )}
                     <button
