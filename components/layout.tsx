@@ -137,14 +137,14 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                   >
                     Sign up
                   </button>
-                  <Link href="/contact">
+                  {/* <Link href="/contact">
                   <button
                     // onClick={() => openAuthModal("signup")}
                     className="text-[#2c1810] text-sm font-medium hover:text-[#a67c52] transition-colors font-body"
                   >
                     Contact Us
                   </button>
-                  </Link>
+                  </Link> */}
                 </>
               )}
             </div>
