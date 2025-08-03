@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Search, ShoppingBag, Menu, X, MoreHorizontal, Heart } from "lucide-react"
 import Link from "next/link"
 import AuthModal from "./auth-modal"
 import { deleteCookie, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import "./layoutStyle.css"
 
 interface LayoutProps {
@@ -47,6 +47,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
     }
   }
   const pathname = usePathname();
+  const router = useRouter();
   useEffect(() => {
     setIsSearchVisible(pathname === "/shop");
   }, [pathname]);
@@ -62,7 +63,22 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
     deleteCookie("user")
     window.location.reload()
   }
+  const [debouncedSearch, setDebouncedSearch] = useState("")
 
+  // Debounced navigation effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (debouncedSearch && pathname !== "/shop") {
+        router.push(`/shop?q=${debouncedSearch}`)
+      }
+    }, 500) // 500ms delay
+
+    return () => clearTimeout(timeoutId)
+  }, [debouncedSearch, pathname, router])
+
+  const handingNavigateToSearch = (value: string) => {
+    setDebouncedSearch(value)
+  }
   return (
     <div className="min-h-screen bg-[#f9f7f4] text-[#2c1810] font-body">
       <header className="bg-white px-4 py-4 md:px-6 border-b border-[#e5e5e5]">
@@ -79,7 +95,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
             </div>
 
             {/* Search Bar */}
-            {isSearchVisible && (
+            {/* {isSearchVisible && ( */}
               <div className="flex-1 max-w-md relative">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8a7960]" />
@@ -90,12 +106,18 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                     value={productSearch}
                     onChange={(e) => {
                       setProductSearch(e.target.value)
-                      handleSearch?.(e.target.value)
+                      // If not on /shop page, navigate to /shop
+                      if (pathname !== "/shop") {
+                        handingNavigateToSearch(e.target.value)
+                        // router.push(`/shop?q=${e.target.value}`)
+                      }else{
+                        handleSearch?.(e.target.value)
+                      }
                     }}
                   />
                 </div>
               </div>
-            )}
+            {/* )} */}
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-6 flex-shrink-0">
