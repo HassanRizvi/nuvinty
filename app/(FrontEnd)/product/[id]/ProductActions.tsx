@@ -208,21 +208,22 @@ export default function ProductActions({ productId, images, name, url, actionTyp
                 {savedProducts.has(productId) ? "Saved" : "Save"}
               </span>
             </button>
-            <button
+            {/* <button
               onClick={() => window.open(url, '_blank')}
               className="flex-1 border-2 border-[#d4c4b0] rounded-lg py-3 px-4 flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors font-body"
             >
               ↗ View Original
-            </button>
+            </button> */}
           </div>
-        ) : (
-          <button
-            onClick={() => window.open(url, '_blank')}
-            className="w-full border-2 border-[#d4c4b0] rounded-lg py-3 px-4 flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors font-body"
-          >
-            ↗ View Original
-          </button>
-        )}
+        ) :
+          <></>
+          // <button
+          //   onClick={() => window.open(url, '_blank')}
+          //   className="w-full border-2 border-[#d4c4b0] rounded-lg py-3 px-4 flex items-center justify-center text-[#6b5b4f] hover:border-[#a67c52] hover:text-[#a67c52] transition-colors font-body"
+          // >
+          //   ↗ View Original
+          // </button>
+        }
       </>
     )
   }

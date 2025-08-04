@@ -9,6 +9,7 @@ import { featchData, GetData, handleGetUser } from "@/helper/general"
 import { Endpoints } from "@/config"
 import Link from "next/link"
 import FiltersData from "@/categories.json"
+import AuthModal from '@/components/auth-modal'
 
 interface PaginationInfo {
     currentPage: number
@@ -39,7 +40,8 @@ interface ShopProps {
 export default function Shop({
     products,
     pagination,
-    initialFilters = {}
+    initialFilters = {},
+    openAuthModal
 }: ShopProps) {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedProduct, setSelectedProduct] = useState<ProductInterface | null>(null)
@@ -58,6 +60,7 @@ export default function Shop({
     const [gender, setGender] = useState(initialFilters.gender || "")
     const [price, setPrice] = useState(initialFilters.price || "")
     const [showFilters, setShowFilters] = useState(true)
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
     const searchParams = useSearchParams()
     const router = useRouter()
 
@@ -213,26 +216,33 @@ export default function Shop({
         []
     )
     const toggleSaveProduct = async (productId: string, e: React.MouseEvent) => {
-        e.stopPropagation()
-
-        const user = handleGetUser()
-        if (!user || !user._id) {
-            console.error("User not found")
-            return
-        }
-
-        // Optimistically update UI
-        setSavedProducts((prev) => {
-            const newSet = new Set(prev)
-            if (newSet.has(productId)) {
-                newSet.delete(productId)
-            } else {
-                newSet.add(productId)
+        const logedin = handleGetUser()
+        if (logedin) {
+            e.stopPropagation()
+            const user = handleGetUser()
+            if (!user || !user._id) {
+                console.error("User not found")
+                return
             }
-            return newSet
-        })
-
-        debouncedToggleSave(user._id, productId)
+            // Optimistically update UI
+            setSavedProducts((prev) => {
+                const newSet = new Set(prev)
+                if (newSet.has(productId)) {
+                    newSet.delete(productId)
+                } else {
+                    newSet.add(productId)
+                }
+                return newSet
+            })
+            debouncedToggleSave(user._id, productId)
+        }else{
+            alert("Please login to save products")
+            setIsAuthModalOpen(true)
+            // openAuthModal?.("login")
+        }
+    }
+    const closeAuthModal = () => {
+        setIsAuthModalOpen(false)
     }
     const openProductDetail = (product: ProductInterface) => {
         setSelectedProduct(product)
@@ -483,7 +493,7 @@ export default function Shop({
             {/* Products */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : "All"} `}</h1>
+                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : ""} ${category&&brand ? "-" : ""} ${brand ? brand : ""} `}</h1>
                     {currentPagination.totalProducts === 0 && (
                         <div className="text-center text-lg text-[#6b5b4f] font-body h-32 flex items-center justify-center">No products found</div>
                     )}
@@ -499,17 +509,17 @@ export default function Shop({
                             >
                                 <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "h-80"}`}>
                                     {/* Heart Save Button - Only show if user is logged in */}
-                                    {handleGetUser() && (
-                                        <button
-                                            onClick={(e) => toggleSaveProduct(product._id, e)}
-                                            className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
-                                                ? "bg-red-500 text-white shadow-lg"
-                                                : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
-                                                }`}
-                                        >
-                                            <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
-                                        </button>
-                                    )}
+                                    {/* {handleGetUser() && ( */}
+                                    <button
+                                        onClick={(e) => toggleSaveProduct(product._id, e)}
+                                        className={`absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${savedProducts.has(product._id)
+                                            ? "bg-red-500 text-white shadow-lg"
+                                            : "bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500"
+                                            }`}
+                                    >
+                                        <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
+                                    </button>
+                                    {/* )}   */}
 
                                     <Link href={`/product/${product._id}`} className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors">
                                         <img
@@ -521,7 +531,7 @@ export default function Shop({
                                 </div>
 
                                 <Link href={`/product/${product._id}`} className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
-                                    <div className="text-xs text-[#8a7960] uppercase tracking-wide mb-2 font-luxury">{product.brand} {product._id}</div>
+                                    {/* <div className="text-xs text-[#8a7960] uppercase tracking-wide mb-2 font-luxury">{product.brand} {product._id}</div> */}
                                     <h3
                                         className={`text-[#2c1810] font-medium mb-2 line-clamp-2 font-body ${viewMode === "list" ? "text-lg" : "text-base"
                                             }`}
@@ -531,7 +541,7 @@ export default function Shop({
                                     <div
                                         className={`text-[#a67c52] font-semibold font-luxury ${viewMode === "list" ? "text-xl" : "text-lg"}`}
                                     >
-                                        {product?.price ? product.price : "100"} {product?.currency ? product.currency : ""}
+                                        {product?.price ? product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "100"} {product?.currency ? product.currency : ""}
                                     </div>
                                     <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • {product.location ?? ""}</div>
                                 </Link>
@@ -618,6 +628,7 @@ export default function Shop({
                     )}
                 </div>
             </div>
+            <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} mode={'login'} />
         </Layout>
     )
 }

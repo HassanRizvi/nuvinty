@@ -20,7 +20,7 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
                   prefetch={true}
-                  href="/shop"
+                  href="#featured-brands"
                   className="bg-[#2c1810] text-[#fefdfb] px-8 py-4 font-luxury font-medium hover:bg-[#1a0f08] transition-colors inline-flex items-center justify-center gap-2 tracking-wide"
                 >
                   Explore Collection
@@ -41,7 +41,7 @@ export default function HomePage() {
 
             <div className="relative">
               <div className="bg-[#f4f0eb] p-12 text-center">
-                <div className="text-6xl font-luxury font-light text-[#a67c52] mb-4">17,302</div>
+                <div className="text-6xl font-luxury font-light text-[#a67c52] mb-4">100,000+                </div>
                 <div className="text-xl font-luxury text-[#2c1810] mb-2">Curated Pieces</div>
                 <div className="text-sm text-[#6b5b4f] font-light">From prestigious fashion houses</div>
               </div>
@@ -124,7 +124,7 @@ export default function HomePage() {
     </section>
 
       {/* Featured Brands Section */ }
-  <section className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
+  <section id="featured-brands" className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Featured Luxury Brands</h2>

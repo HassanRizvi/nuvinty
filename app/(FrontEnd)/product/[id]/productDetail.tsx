@@ -36,7 +36,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   {product.name}
                 </h1>
                 <div className="text-2xl font-semibold text-[#a67c52] font-luxury">
-                  {product.price ? product.price : "100"} {product.currency ? product.currency : ""}
+                  {product.price ? product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "100"} {product.currency ? product.currency : ""}
                 </div>
               </div>
 

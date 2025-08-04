@@ -1,3 +1,6 @@
+html {
+    scroll-behavior: smooth;
+  }
 footer {
     background: #4A3728;
     color: white;

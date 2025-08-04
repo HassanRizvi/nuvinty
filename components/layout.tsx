@@ -213,12 +213,20 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
             {isMenuOpen && (
               <div className="mt-4 pb-4 border-t border-[#e5e5e5] pt-4">
                 <div className="flex flex-col space-y-4">
-                  {isLoggedIn && (
-                    <button className="flex items-center justify-center gap-2 text-[#2c1810] text-sm font-medium py-2 border border-[#e5e5e5] rounded-md">
+                  {/* {isLoggedIn && ( */}
+                    <button 
+                      onClick={() => {
+                        if (isLoggedIn) {
+                          router.push("/saved")
+                        } else {
+                          openAuthModal("login")
+                        }
+                      }}
+                    className="flex items-center justify-center gap-2 text-[#2c1810] text-sm font-medium py-2 border border-[#e5e5e5] rounded-md">
                       <Heart className="w-4 h-4" />
-                      Save search
+                      My Account
                     </button>
-                  )}
+                  {/* )} */}
                   {/* {!isLoggedIn && (
                     <div className="flex items-center space-x-4">
                       <button
@@ -271,14 +279,24 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                       </button>
                     </>
                   )}
-                  <Link href="/about" className="text-center">
+                  {/* <Link href="/about" className="text-center">
                     <button
                       // onClick={() => openAuthModal("signup")}
                       className="text-[#2c1810] text-sm font-medium hover:text-[#a67c52] transition-colors font-body"
                     >
                       About
                     </button>
-                  </Link>
+                  </Link> */}
+                  {
+                    isLoggedIn && (
+                      <button
+                          onClick={() => signOut()}
+                          className="text-[#2c1810] text-sm font-medium hover:text-[#a67c52] transition-colors font-body"
+                        >
+                          Sign out
+                        </button>
+                    )
+                  }
                   {/* <div className=" pt-4 space-y-2">
                     <Link
                       href="/about"
