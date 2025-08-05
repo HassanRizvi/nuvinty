@@ -39,6 +39,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 					<ProductActions actionType="back" />
 				</div>
 			</div>
+			{product.images?.[0]}
 
 			{/* Product Detail */}
 			<div className="bg-[#fefdfb] px-4 md:px-10 py-10">
