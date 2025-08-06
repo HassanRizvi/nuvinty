@@ -61,7 +61,9 @@ export async function GET(request) {
       text: {
         query: condition,
         path: ["condition"],
-        fuzzy: { maxEdits: 2, prefixLength: 1 },
+        // analyzer: "lucene.standard"
+        // fuzzy: { maxEdits: 2, prefixLength: 1 },
+        // caseSensitive: false,
       },
     });
   }

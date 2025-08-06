@@ -401,7 +401,7 @@ export default function Shop({
                                 {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span> */}
                                 <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
                                     <option value="">Any Condition</option>
-                                    <option value="New without tag">New without tag</option>
+                                    <option value="New without tags">New without tag</option>
                                     <option value="New without box">New without box</option>
                                     <option value="New other">New other</option>
                                     <option value="Open box">Open box</option>
