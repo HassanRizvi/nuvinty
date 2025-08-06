@@ -236,7 +236,7 @@ export default function Shop({
             })
             debouncedToggleSave(user._id, productId)
         }else{
-            alert("Please login to save products")
+            // alert("Please login to save products")
             setIsAuthModalOpen(true)
             // openAuthModal?.("login")
         }

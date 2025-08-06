@@ -1,9 +1,9 @@
 import connectDB from "@/dataBase/db";
 import { Product } from "@/dataBase/models/Products";
-import { corsHeaders, handleOptions, withCORS } from "@/lib/cors";
+import { handleOptions, withCORS } from "@/lib/cors";
 
 export async function OPTIONS() {
-  return handleOptions(); // ✅ handles preflight
+  return handleOptions();
 }
 
 export async function GET(request) {
@@ -14,94 +14,87 @@ export async function GET(request) {
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 12;
   const skip = (page - 1) * limit;
+
   const category = searchParams.get("category") || "";
   const brand = searchParams.get("brand") || "";
   const condition = searchParams.get("condition") || "";
   const location = searchParams.get("location") || "";
   const price = searchParams.get("price") || "";
-  // const size = searchParams.get("size") || "";
-  // const gender = searchParams.get("gender") || "";
 
   const pipeline = [];
 
+  // Build $search compound queries
+  const searchConditions = [];
+
   if (searchQuery) {
-    // pipeline.push({
-    //   $match: { name: searchQuery },
-    // });
-    pipeline.push({
-      $search: {
-        index: "productIndex",
-        text: {
-          query: searchQuery,
-          path: ["name"],
-          fuzzy: { maxEdits: 2, prefixLength: 1 },
-        },
-      },
-    });
-  }
-  if (category) {
-    pipeline.push({
-      $search: {
-        index: "productIndex",
-        text: {
-          query: category,
-          path: ["category"],
-          fuzzy: { maxEdits: 2, prefixLength: 1 },
-        },
+    searchConditions.push({
+      text: {
+        query: searchQuery,
+        path: ["name"],
+        fuzzy: { maxEdits: 2, prefixLength: 1 },
       },
     });
   }
 
+  if (category) {
+    searchConditions.push({
+      text: {
+        query: category,
+        path: ["category"],
+        fuzzy: { maxEdits: 2, prefixLength: 1 },
+      },
+    });
+  }
 
   if (brand) {
-    pipeline.push({
-      $search: {
-        index: "productIndex",
-        text: {
-          query: brand,
-          path: ["brand"],
-          fuzzy: { maxEdits: 2, prefixLength: 1 },
-        },
+    searchConditions.push({
+      text: {
+        query: brand,
+        path: ["brand"],
+        fuzzy: { maxEdits: 2, prefixLength: 1 },
       },
     });
   }
 
   if (condition) {
-    pipeline.push({
-      $search: {
-        index: "productIndex",
-        text: {
-          query: condition,
-          path: ["condition"],
-          fuzzy: { maxEdits: 2, prefixLength: 1 },
-        },
+    searchConditions.push({
+      text: {
+        query: condition,
+        path: ["condition"],
+        fuzzy: { maxEdits: 2, prefixLength: 1 },
       },
     });
   }
 
   if (location) {
+    searchConditions.push({
+      text: {
+        query: location,
+        path: ["location"],
+        fuzzy: { maxEdits: 2, prefixLength: 1 },
+      },
+    });
+  }
+
+  // Add $search only if we have filters
+  if (searchConditions.length > 0) {
     pipeline.push({
       $search: {
         index: "productIndex",
-        text: {
-          query: location,
-          path: ["location"],
-          fuzzy: { maxEdits: 2, prefixLength: 1 },
+        compound: {
+          must: searchConditions,
         },
       },
     });
   }
 
-
+  // Handle price range
   if (price) {
-    const Newprice = price.toString();
-    const [minPriceStr, maxPriceStr] = Newprice.split("-");
+    const [minPriceStr, maxPriceStr] = price.split("-");
     const minPrice = parseFloat(minPriceStr);
     const maxPrice = parseFloat(maxPriceStr);
 
     if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-      console.log("Min Price ", minPrice, "Max Price ", maxPrice);
-
       pipeline.push({
         $match: {
           $expr: {
@@ -112,23 +105,10 @@ export async function GET(request) {
           },
         },
       });
-    } else {
-      console.log("Invalid price range");
     }
-  } else {
-    console.log("Don't have price");
   }
 
-
-
-  // if (gender) {
-  //   pipeline.push({
-  //     $match: { gender: gender },
-  //   });
-  // }
-
-
-
+  // Pagination + total count
   pipeline.push({
     $facet: {
       paginatedResults: [{ $skip: skip }, { $limit: limit }],
