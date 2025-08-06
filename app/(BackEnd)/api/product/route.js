@@ -39,30 +39,60 @@ export async function GET(request) {
       },
     });
   }
-
   if (category) {
     pipeline.push({
-      $match: { category: category },
+      $search: {
+        index: "productIndex",
+        text: {
+          query: category,
+          path: ["category"],
+          fuzzy: { maxEdits: 2, prefixLength: 1 },
+        },
+      },
     });
   }
 
+
   if (brand) {
     pipeline.push({
-      $match: { brand: brand },
+      $search: {
+        index: "productIndex",
+        text: {
+          query: brand,
+          path: ["brand"],
+          fuzzy: { maxEdits: 2, prefixLength: 1 },
+        },
+      },
     });
   }
 
   if (condition) {
     pipeline.push({
-      $match: { condition: condition },
+      $search: {
+        index: "productIndex",
+        text: {
+          query: condition,
+          path: ["condition"],
+          fuzzy: { maxEdits: 2, prefixLength: 1 },
+        },
+      },
     });
   }
 
   if (location) {
     pipeline.push({
-      $match: { location: location },
+      $search: {
+        index: "productIndex",
+        text: {
+          query: location,
+          path: ["location"],
+          fuzzy: { maxEdits: 2, prefixLength: 1 },
+        },
+      },
     });
   }
+
+
   if (price) {
     const Newprice = price.toString();
     const [minPriceStr, maxPriceStr] = Newprice.split("-");

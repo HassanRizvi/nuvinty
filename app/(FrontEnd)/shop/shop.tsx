@@ -401,11 +401,14 @@ export default function Shop({
                                 {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span> */}
                                 <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
                                     <option value="">Any Condition</option>
-                                    <option value="New">New</option>
-                                    <option value="Open Box">Open Box</option>
-                                    <option value="Very Good">Very Good</option>
+                                    <option value="New without tag">New without tag</option>
+                                    <option value="New without box">New without box</option>
+                                    <option value="New other">New other</option>
+                                    <option value="Open box">Open box</option>
+                                    <option value="New - Open box">New - Open box</option>
+                                    {/* <option value="Very Good">Very Good</option>
                                     <option value="Preowned">Preowned</option>
-                                    <option value="Used">Used</option>
+                                    <option value="Used">Used</option> */}
                                 </select>
                             </div>
                             {FiltersData.find((cat) => cat.category === category)?.haveSize && (
@@ -493,7 +496,7 @@ export default function Shop({
             {/* Products */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : ""} ${category&&brand ? "-" : ""} ${brand ? brand : ""} `}</h1>
+                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : ""} ${category&&brand ? "-" : ""} ${brand ? brand : ""} ${category || brand ? "-" : ""} ${currentPagination.totalProducts} results`}</h1>
                     {currentPagination.totalProducts === 0 && (
                         <div className="text-center text-lg text-[#6b5b4f] font-body h-32 flex items-center justify-center">No products found</div>
                     )}
