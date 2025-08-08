@@ -58,7 +58,7 @@ export default function HomePage() {
       <section id="categories" className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Explore Luxury Brands</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Explore Categories</h2>
             <p className="text-lg text-[#6b5b4f]">Shop from the world's most prestigious fashion houses</p>
           </div>
 
