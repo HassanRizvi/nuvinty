@@ -297,14 +297,14 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                         </button>
                     )
                   }
-                  {/* <div className=" pt-4 space-y-2">
-                    <Link
-                      href="/about"
-                      className="block font-body text-[#2c1810] hover:text-[#a67c52] transition-colors font-medium py-2"
-                    >
-                      About
-                    </Link>
-                  </div> */}
+                  <div className="flex flex-col items-left gap-2">
+                        <button
+                          onClick={() => router.push("/shop")}
+                          className="text-[#2c1810] text-sm font-medium hover:text-[#a67c52] transition-colors font-body"
+                        >
+                          Shop
+                        </button>
+                      </div>
                 </div>
               </div>
             )}

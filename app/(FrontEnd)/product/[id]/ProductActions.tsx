@@ -121,7 +121,8 @@ export default function ProductActions({ productId, images, name, url, actionTyp
   // For image gallery main image, heart button, and thumbnails
   if (images && name && productId && !url) {
     return (
-      <div className="relative aspect-square bg-[#f4f0eb] rounded-xl overflow-hidden">
+      <>
+      <div className="relative  bg-[#f4f0eb] rounded-xl overflow-hidden">
         {/* Heart Save Button - Only show if user is logged in */}
         {handleGetUser() && (
           <button
@@ -158,7 +159,7 @@ export default function ProductActions({ productId, images, name, url, actionTyp
         )}
         {/* Thumbnail Gallery */}
         {images.length > 1 && (
-          <div className="absolute w-full left-0 -bottom-20">
+          <div className=" w-full left-0 -bottom-20 bg-[#fefdfb] px-2 pt-4">
             <div className="grid grid-cols-5 gap-2">
               {images.map((image, index) => (
                 <div
@@ -177,6 +178,27 @@ export default function ProductActions({ productId, images, name, url, actionTyp
           </div>
         )}
       </div>
+       {/* {images.length > 1 && (
+          <div className="absolute w-full left-0 -bottom-20">
+            <div className="grid grid-cols-5 gap-2">
+              {images.map((image, index) => (
+                <div
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`aspect-square bg-[#f4f0eb] rounded-lg border-2 cursor-pointer hover:border-[#a67c52] transition-colors ${index === selectedImage ? "border-[#a67c52]" : "border-[#d4c4b0]"}`}
+                >
+                  <img
+                    src={image || "/placeholder.svg"}
+                    alt={`View ${index + 1}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )} */}
+      </>
+      
     )
   }
 

@@ -336,6 +336,18 @@ export default function Shop({
         setPrice(e.target.value)
         fetchPage(1, searchQuery, category, brand, condition, size, location, gender, e.target.value)
     }
+    const clearFilters = () => {
+        const params = new URLSearchParams()
+        router.push('/shop')
+        setCategory("")
+        setBrand("")
+        setSize("")
+        setCondition("")
+        setGender("")
+        setPrice("")
+        setLocation("")
+        fetchPage(1, searchQuery, "", "", "", "", "", "", "")
+    }
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -452,6 +464,24 @@ export default function Shop({
                                     <option value="400-600">$400 - $600</option>
                                     <option value="600+">$600+</option>
                                 </select>
+                            </div>
+                            <div className="flex items-center gap-3 w-[45%] md:w-40">
+                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
+                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
+                                    <option value="">Any Price</option>
+                                    <option value="0-200">Under $200</option>
+                                    <option value="200-400">$200 - $400</option>
+                                    <option value="400-600">$400 - $600</option>
+                                    <option value="600+">$600+</option>
+                                </select> */}
+                                <button 
+                                    onClick={() => {
+                                        clearFilters()
+                                    }}
+                                    className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm hover:bg-[#f4f0eb] focus:outline-none focus:border-[#a67c52] font-body"
+                                >
+                                    Clear Filters
+                                </button>
                             </div>
                         </div>
                     )}

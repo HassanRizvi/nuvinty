@@ -20,10 +20,10 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
                   prefetch={true}
-                  href="#featured-brands"
+                  href="#categories"
                   className="bg-[#2c1810] text-[#fefdfb] px-8 py-4 font-luxury font-medium hover:bg-[#1a0f08] transition-colors inline-flex items-center justify-center gap-2 tracking-wide"
                 >
-                  Explore Collection
+                  Explore Categories
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -54,8 +54,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4 md:px-10 bg-[#fefdfb]">
+      {/* Featured Brands Section */}
+      <section id="categories" className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Explore Luxury Brands</h2>
+            <p className="text-lg text-[#6b5b4f]">Shop from the world's most prestigious fashion houses</p>
+          </div>
+
+          <div className="flex flex-wrap gap-6 justify-center items-center">
+            {/* {FiltersData.brands.map(
+              (brand) => (
+                <div
+                  key={brand}
+                  className="bg-white rounded-lg p-6 text-center shadow-sm border border-[#d4c4b0] hover:shadow-md transition-shadow"
+                >
+                  <div className="text-sm font-semibold text-[#a67c52]">{brand}</div>
+                </div>
+              ),
+            )} */}
+            {
+              FiltersData.flatMap((cat) => cat.category)
+                .sort(() => Math.random() - 0.5) // Shuffle array randomly
+                .slice(0, 8) // Take first 8 items
+                .map((category) => (
+                  <Link
+                    key={category}
+                    href={`/shop?category=${encodeURIComponent(category)}`}
+                    className="bg-white rounded-lg p-6 text-center shadow-sm border border-[#d4c4b0] hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    <div className="text-sm font-semibold text-[#a67c52]">{category}</div>
+                  </Link>
+                ))
+            }
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section id="why-choose-nuvinty" className="py-16 px-4 md:px-10 bg-[#fefdfb]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Why Choose Nuvinty?</h2>
@@ -69,17 +106,17 @@ export default function HomePage() {
               shopping isn’t just about finding beautiful things, it’s about knowing the story behind
               them. Whether they be pre-loved or new, but made with our future in mind.</p>
 
-          <p className="text-lg text-[#6b5b4f] max-w-2xl mx-auto">Our exclusive Nuvinty Index helps you
-            understand the impact of brands on the environment, highlighting those committed to creating
-            a better future. We allow you to browse new items from brands actively committed to
-            protecting our planet while elevating your wardrobe. Not only that we have a huge selection
-            of pre-loved luxury items to choose from. Whether you're hunting for that perfect vintage
-            Hermès or discovering emerging sustainable designers, we've created more than just a
-            marketplace - we've built a community where luxury and responsibility go hand in hand. Join
-            us as we redefine what it means to shop consciously.</p>
-        </div>
+            <p className="text-lg text-[#6b5b4f] max-w-2xl mx-auto">Our exclusive Nuvinty Index helps you
+              understand the impact of brands on the environment, highlighting those committed to creating
+              a better future. We allow you to browse new items from brands actively committed to
+              protecting our planet while elevating your wardrobe. Not only that we have a huge selection
+              of pre-loved luxury items to choose from. Whether you're hunting for that perfect vintage
+              Hermès or discovering emerging sustainable designers, we've created more than just a
+              marketplace - we've built a community where luxury and responsibility go hand in hand. Join
+              us as we redefine what it means to shop consciously.</p>
+          </div>
 
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center p-6 rounded-xl bg-white shadow-sm border border-[#d4c4b0]">
               <div className="w-16 h-16 bg-[#a67c52] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Star className="w-8 h-8 text-white" />
@@ -120,19 +157,19 @@ export default function HomePage() {
               </p>
             </div>
           </div> */}
-      </div>
-    </section>
+        </div>
+      </section>
 
-      {/* Featured Brands Section */ }
-  <section id="featured-brands" className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
-    <div className="max-w-6xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Featured Luxury Brands</h2>
-        <p className="text-lg text-[#6b5b4f]">Shop from the world's most prestigious fashion houses</p>
-      </div>
+      {/* Featured Brands Section */}
+      <section id="featured-brands" className="py-16 px-4 md:px-10 bg-[#f9f7f4]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">Featured Luxury Brands</h2>
+            <p className="text-lg text-[#6b5b4f]">Shop from the world's most prestigious fashion houses</p>
+          </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
-        {/* {FiltersData.brands.map(
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
+            {/* {FiltersData.brands.map(
               (brand) => (
                 <div
                   key={brand}
@@ -142,41 +179,41 @@ export default function HomePage() {
                 </div>
               ),
             )} */}
-        {
-          FiltersData.flatMap((cat) => cat.brands)
-            .sort(() => Math.random() - 0.5) // Shuffle array randomly
-            .slice(0, 8) // Take first 8 items
-            .map((brand) => (
-              <Link
-                key={brand}
-                href={`/shop?brand=${encodeURIComponent(brand)}`}
-                className="bg-white rounded-lg p-6 text-center shadow-sm border border-[#d4c4b0] hover:shadow-md transition-shadow cursor-pointer"
-              >
-                <div className="text-sm font-semibold text-[#a67c52]">{brand}</div>
-              </Link>
-            ))
-        }
-      </div>
-    </div>
-  </section>
+            {
+              FiltersData.flatMap((cat) => cat.brands)
+                .sort(() => Math.random() - 0.5) // Shuffle array randomly
+                .slice(0, 8) // Take first 8 items
+                .map((brand) => (
+                  <Link
+                    key={brand}
+                    href={`/shop?brand=${encodeURIComponent(brand)}`}
+                    className="bg-white rounded-lg p-6 text-center shadow-sm border border-[#d4c4b0] hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    <div className="text-sm font-semibold text-[#a67c52]">{brand}</div>
+                  </Link>
+                ))
+            }
+          </div>
+        </div>
+      </section>
 
-  {/* CTA Section */ }
-  <section className="py-20 px-4 md:px-10 bg-[#2c1810] text-[#fefdfb]">
-    <div className="max-w-4xl mx-auto text-center">
-      <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Elevate Your Style?</h2>
-      <p className="text-lg text-[#d4c4b0] mb-8 leading-relaxed">
-        Join thousands of fashion enthusiasts who trust Nuvinty for their luxury fashion needs. Start your journey
-        to exceptional style today.
-      </p>
-      <Link
-        href="/shop"
-        className="bg-[#a67c52] text-[#fefdfb] px-10 py-4 rounded-lg font-semibold hover:bg-[#8a6441] transition-colors inline-flex items-center gap-2 text-lg"
-      >
-        Start Shopping
-        <ArrowRight className="w-6 h-6" />
-      </Link>
-    </div>
-  </section>
+      {/* CTA Section */}
+      <section className="py-20 px-4 md:px-10 bg-[#2c1810] text-[#fefdfb]">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Elevate Your Style?</h2>
+          <p className="text-lg text-[#d4c4b0] mb-8 leading-relaxed">
+            Join thousands of fashion enthusiasts who trust Nuvinty for their luxury fashion needs. Start your journey
+            to exceptional style today.
+          </p>
+          <Link
+            href="/shop"
+            className="bg-[#a67c52] text-[#fefdfb] px-10 py-4 rounded-lg font-semibold hover:bg-[#8a6441] transition-colors inline-flex items-center gap-2 text-lg"
+          >
+            Start Shopping
+            <ArrowRight className="w-6 h-6" />
+          </Link>
+        </div>
+      </section>
     </Layout >
   )
 }

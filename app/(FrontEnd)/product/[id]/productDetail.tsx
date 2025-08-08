@@ -39,7 +39,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 					<ProductActions actionType="back" />
 				</div>
 			</div>
-			{product.images?.[0]}
 
 			{/* Product Detail */}
 			<div className="bg-[#fefdfb] px-4 md:px-10 py-10">
@@ -47,6 +46,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 						{/* Image Gallery */}
 						<div className="space-y-6">
+							
 							<ProductActions
 								productId={product._id}
 								images={product.images}
