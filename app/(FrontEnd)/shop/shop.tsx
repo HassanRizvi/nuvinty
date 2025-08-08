@@ -478,9 +478,9 @@ export default function Shop({
                                     onClick={() => {
                                         clearFilters()
                                     }}
-                                    className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm hover:bg-[#f4f0eb] focus:outline-none focus:border-[#a67c52] font-body"
+                                    className=" py-2 bg-[#fefdfb] text-[#a67c52] text-sm font-body"
                                 >
-                                    Clear Filters
+                                    Clear All
                                 </button>
                             </div>
                         </div>
