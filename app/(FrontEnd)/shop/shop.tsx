@@ -449,8 +449,8 @@ export default function Shop({
                                     {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
                                     <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
                                         <option value="">Any Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                        <option value="Mens">Male</option>
+                                        <option value="Womens">Female</option>
                                         <option value="Unisex">Unisex</option>
                                     </select>
                                 </div>
@@ -566,7 +566,7 @@ export default function Shop({
                                 <Link href={`/product/${product._id}`} className={`p-5 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
                                     {/* <div className="text-xs text-[#8a7960] uppercase tracking-wide mb-2 font-luxury">{product.brand} {product._id}</div> */}
                                     <h3
-                                        className={`text-[#2c1810] font-medium mb-2 line-clamp-2 font-body ${viewMode === "list" ? "text-lg" : "text-base"
+                                        className={`text-[#2c1810] font-medium mb-2  font-body ${viewMode === "list" ? "text-lg" : "text-base"
                                             }`}
                                     >
                                         {product.name}

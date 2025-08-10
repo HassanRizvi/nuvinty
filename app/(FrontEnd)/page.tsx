@@ -34,8 +34,8 @@ export default function HomePage() {
                 </Link>
               </div>
               <p className="text-lg text-[#6b5b4f] mb-10 leading-relaxed font-light max-w-md">
-                Discover exceptional pieces from the world's most prestigious fashion houses. Where exclusivity meets
-                conscious fashion.
+              Discover new and pre-loved exceptional pieces from
+              the world's most prestigious fashion houses.
               </p>
             </div>
 

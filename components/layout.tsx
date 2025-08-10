@@ -205,6 +205,17 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                   type="text"
                   placeholder="Search by brand, article..."
                   className="w-full pl-12 pr-4 py-3 bg-[#f8f8f8] rounded-full text-sm font-body placeholder-[#8a7960] focus:outline-none focus:ring-2 focus:ring-[#a67c52] focus:bg-white transition-all"
+                  value={productSearch}
+                    onChange={(e) => {
+                      setProductSearch(e.target.value)
+                      // If not on /shop page, navigate to /shop
+                      if (pathname !== "/shop") {
+                        handingNavigateToSearch(e.target.value)
+                        // router.push(`/shop?q=${e.target.value}`)
+                      }else{
+                        handleSearch?.(e.target.value)
+                      }
+                    }}
                 />
               </div>
             )}
@@ -287,7 +298,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                       About
                     </button>
                   </Link> */}
-                  {
+                  {/* {
                     isLoggedIn && (
                       <button
                           onClick={() => signOut()}
@@ -296,7 +307,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
                           Sign out
                         </button>
                     )
-                  }
+                  } */}
                   <div className="flex flex-col items-left gap-2">
                         <button
                           onClick={() => router.push("/shop")}

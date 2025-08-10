@@ -300,7 +300,7 @@ export default function Saved({
                                     <div
                                         className={`text-[#a67c52] font-semibold font-luxury ${viewMode === "list" ? "text-xl" : "text-lg"}`}
                                     >
-                                        {"100"}
+                                        {product?.price ? product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "100"} {product?.currency ? product.currency : ""}
                                     </div>
                                     <div className="text-xs text-[#6b5b4f] mt-2 font-body">Direct Shipping • United Kingdom</div>
                                 </Link>

@@ -52,6 +52,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <meta name='impact-site-verification' content='de1cff2f-8736-42bd-8067-1be50a39cafc' />
       </head>
       <body>
         {children}
