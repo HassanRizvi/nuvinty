@@ -2,7 +2,7 @@
 import { useSearchParams, useRouter } from 'next/navigation'
 import React, { useState, useEffect, useMemo, useCallback } from "react"
 import { debounce } from "lodash"
-import { Grid, List, X, Heart, ChevronLeft, ChevronRight, Filter } from "lucide-react"
+import { Grid, List, X, Heart, ChevronLeft, ChevronRight, Filter, Trash2 } from "lucide-react"
 import Layout from "@/components/layout"
 import { ProductInterface } from "@/types/productInterface"
 import { featchData, GetData, handleGetUser } from "@/helper/general"
@@ -61,6 +61,7 @@ export default function Shop({
     const [price, setPrice] = useState(initialFilters.price || "")
     const [showFilters, setShowFilters] = useState(true)
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+    const [userRole, setUserRole] = useState<string | null>(null)
     const searchParams = useSearchParams()
     const router = useRouter()
 
@@ -89,6 +90,11 @@ export default function Shop({
         const fetchFav = async () => {
             const user = handleGetUser()
             if (user && user._id) {
+                // Set user role
+                console.log("user", user)
+                // setUserRole( user.role === "admin" ? "admin" : "user")
+                getUserRole()
+                console.log("userRole", userRole)
                 try {
                     const response = await GetData(Endpoints.user.getFav(user._id))
                     console.log("response", response)
@@ -103,8 +109,9 @@ export default function Shop({
                     }
                 }
             } else {
-                // If no user is logged in, clear saved products
+                // If no user is logged in, clear saved products and role
                 setSavedProducts(new Set())
+                setUserRole(null)
             }
         }
         fetchFav()
@@ -241,6 +248,46 @@ export default function Shop({
             // openAuthModal?.("login")
         }
     }
+
+    const handleDeleteProduct = async (productId: string, e: React.MouseEvent) => {
+        e.stopPropagation()
+        e.preventDefault()
+        
+        const user = handleGetUser()
+        if (!user || !user._id) {
+            setIsAuthModalOpen(true)
+            return
+        }
+
+        if (confirm("Are you sure you want to delete this product?")) {
+            try {
+                const response = await fetch(`/api/product/delete?productId=${productId}&userId=${user._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                if (response.ok) {
+                    // Remove the product from the current products list
+                    setCurrentProducts(prevProducts => 
+                        prevProducts.filter(product => product._id !== productId)
+                    )
+                    // Also remove from saved products if it was saved
+                    setSavedProducts(prev => {
+                        const newSet = new Set(prev)
+                        newSet.delete(productId)
+                        return newSet
+                    })
+                } else {
+                    console.error('Failed to delete product')
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error)
+            }
+        }
+    }
+
     const closeAuthModal = () => {
         setIsAuthModalOpen(false)
     }
@@ -348,6 +395,13 @@ export default function Shop({
         setLocation("")
         fetchPage(1, searchQuery, "", "", "", "", "", "", "")
     }
+    const getUserRole = async () => {
+        const currentUser = handleGetUser()
+        const response = await GetData(Endpoints.user.getUser(currentUser._id))
+        if (response.status === 200) {
+          setUserRole(response.data.role === "admin" ? "admin" : "user")
+        }
+      }
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
@@ -552,6 +606,16 @@ export default function Shop({
                                     >
                                         <Heart className={`w-4 h-4 ${savedProducts.has(product._id) ? "fill-current" : ""}`} />
                                     </button>
+                                    
+                                    {/* Trash Delete Button - Only show if user is admin */}
+                                    {userRole === 'admin' && (
+                                        <button
+                                            onClick={(e) => handleDeleteProduct(product._id, e)}
+                                            className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 z-10 bg-white bg-opacity-90 text-gray-600 hover:bg-opacity-100 hover:text-red-500 hover:bg-red-50"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    )}
                                     {/* )}   */}
 
                                     <Link href={`/product/${product._id}`} className="w-full h-full bg-[#f4f0eb] flex items-center justify-center cursor-pointer hover:bg-[#f0ebe6] transition-colors">
