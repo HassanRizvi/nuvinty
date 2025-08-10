@@ -181,7 +181,29 @@ export default function Shop({
         params.set('q', query)
         router.push(`/shop?${params.toString()}`)
         setSearchQuery(query)
-        await fetchPage(1, query, category, brand, condition, size, location, gender, price)
+        handleEmptyFilters(query)
+        // await fetchPage(1, query, category, brand, condition, size, location, gender, price)
+    }
+        const debouncedEmptyFilters = useMemo(
+        () => debounce((query: string) => {
+            setCategory("")
+            setBrand("")
+            setSize("")
+            setCondition("")
+            setGender("")
+            setPrice("")
+            setLocation("")
+            if (query) {
+                window.location.href = `/shop?q=${query}`
+            } else {
+                window.location.href = '/shop'
+            }
+        }, 2000),
+        []
+    )
+
+    const handleEmptyFilters = (query: string) => {
+        debouncedEmptyFilters(query)
     }
     const debouncedToggleSave = useMemo(
         () => debounce(async (userId: string, productId: string) => {
@@ -402,6 +424,7 @@ export default function Shop({
           setUserRole(response.data.role === "admin" ? "admin" : "user")
         }
       }
+      
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
