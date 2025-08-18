@@ -27,7 +27,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [Role, setRole] = useState<any>(null)
-  const [isSearchVisible, setIsSearchVisible] = useState(false)
+  const [isSearchVisible, setIsSearchVisible] = useState(true)
   useEffect(() => {
     const currentUser = handleGetUser()
     setIsLoggedIn(!!currentUser)
@@ -49,7 +49,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
   const pathname = usePathname();
   const router = useRouter();
   useEffect(() => {
-    setIsSearchVisible(pathname === "/shop");
+    // setIsSearchVisible(pathname === "/shop");
   }, [pathname]);
   const openAuthModal = (mode: "login" | "signup" | "query") => {
     setAuthModal({ isOpen: true, mode })
@@ -198,7 +198,7 @@ export default function Layout({ children, handleSearch, searchQuery }: LayoutPr
             </div>
 
             {/* Mobile Search */}
-            {isSearchVisible && (
+            {isSearchVisible  && (
               <div className="mt-4 relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8a7960]" />
                 <input

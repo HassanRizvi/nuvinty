@@ -177,6 +177,7 @@ export default function Shop({
         }
     }
     const handleSearch = async (query: string) => {
+        clearFilters()
         const params = new URLSearchParams(searchParams.toString())
         params.set('q', query)
         router.push(`/shop?${params.toString()}`)
@@ -409,13 +410,14 @@ export default function Shop({
         const params = new URLSearchParams()
         router.push('/shop')
         setCategory("")
+        setSearchQuery("")
         setBrand("")
         setSize("")
         setCondition("")
         setGender("")
         setPrice("")
         setLocation("")
-        fetchPage(1, searchQuery, "", "", "", "", "", "", "")
+        fetchPage(1, "", "", "", "", "", "", "", "")
     }
     const getUserRole = async () => {
         const currentUser = handleGetUser()
@@ -513,14 +515,13 @@ export default function Shop({
                                     </select>
                                 </div>
                             )}
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Location:</span> */}
+                            {/* <div className="flex items-center gap-3 w-[45%] md:w-40">
                                 <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
                                     <option value="">Any Location</option>
                                     <option value="US">US</option>
                                     <option value="UK">UK</option>
                                 </select>
-                            </div>
+                            </div> */}
                             {FiltersData.find((cat) => cat.category === category)?.haveGender && (
                                 <div className="flex items-center gap-3 w-40">
                                     {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
