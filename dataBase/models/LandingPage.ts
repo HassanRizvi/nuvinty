@@ -1,0 +1,48 @@
+import { Schema, model, models, Types } from 'mongoose'
+
+const landingPageSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: [true, 'Title is required'],
+      trim: true,
+    },
+    slug: {
+      type: String,
+      required: [true, 'Slug is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    filters: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ['active', 'draft'],
+      default: 'draft',
+    },
+    boostedProducts: [
+      {
+        type: Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+    deletedProjects: [
+      {
+        type: Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+  },
+  { timestamps: true }
+)
+
+export const LandingPage = models.LandingPage || model('LandingPage', landingPageSchema)
+
+

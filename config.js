@@ -45,6 +45,16 @@ const Endpoints = {
             url: `${BaseUrl}/queries/create`,
             method: "POST"
         }
+    },
+    admin: {
+        getDashboardData: {
+            url: `${BaseUrl}/dashboard`,
+            method: "GET"
+        },
+        getProducts: (search = '', page = 1) => ({
+            url: `${BaseUrl}/product?search=${encodeURIComponent(search)}&page=${page}`,
+            method: "GET"
+        })
     }
 }
 export { BaseUrl, Endpoints }

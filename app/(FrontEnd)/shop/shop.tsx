@@ -10,6 +10,7 @@ import { Endpoints } from "@/config"
 import Link from "next/link"
 import FiltersData from "@/categories.json"
 import AuthModal from '@/components/auth-modal'
+import ProductFilters from "@/components/ProductFilters"
 
 interface PaginationInfo {
     currentPage: number
@@ -35,12 +36,14 @@ interface ShopProps {
     products: ProductInterface[];
     pagination: PaginationInfo;
     initialFilters?: Filters;
+    hideFilters?: boolean;
 }
 
 export default function Shop({
     products,
     pagination,
     initialFilters = {},
+    hideFilters = false,
     openAuthModal
 }: ShopProps) {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -452,119 +455,35 @@ export default function Shop({
     return (
         <Layout handleSearch={handleSearch} searchQuery={searchQuery}>
             {/* Search and Filters */}
-            <div className="bg-[#fefdfb] px-4 md:px-10 py-6 border-b border-[#d4c4b0]">
-                <div className="max-w-6xl mx-auto">
-                    <div className="flex mb-4 items-center gap-2 md:hidden ">
-                        <button onClick={handleToggleFilters} className="flex items-center gap-2">
-                            <Filter className="w-4 h-4" />
-                            <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Filters</span>
-                        </button>
-                    </div>
-                    {showFilters && (
-                        <div className="flex flex-wrap gap-6 md:flex-nowrap">
-
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Category:</span> */}
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleCategoryChange(e)} value={category}>
-                                    <option value="">All Categories</option>
-                                    {FiltersData.map((category: any) => (
-                                        <option key={category.category} value={category.category}>{category.category}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Brand:</span> */}
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleBrandChange(e)} value={brand}>
-                                    <option value="">All Brands</option>
-                                    {category ?
-                                        FiltersData.find((cat) => cat.category === category)?.brands.map((brand) => (
-                                            <option key={brand} value={brand}>{brand}</option>
-                                        ))
-                                        :
-                                        FiltersData.flatMap((cat) => cat.brands).map((brand) => (
-                                            <option key={brand} value={brand}>{brand}</option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Condition:</span> */}
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
-                                    <option value="">Any Condition</option>
-                                    <option value="New without tags">New without tag</option>
-                                    <option value="New without box">New without box</option>
-                                    <option value="New other">New other</option>
-                                    <option value="Open box">Open box</option>
-                                    <option value="New - Open box">New - Open box</option>
-                                    {/* <option value="Very Good">Very Good</option>
-                                    <option value="Preowned">Preowned</option>
-                                    <option value="Used">Used</option> */}
-                                </select>
-                            </div>
-                            {FiltersData.find((cat) => cat.category === category)?.haveSize && (
-                                <div className="flex items-center gap-3 w-40">
-                                    <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleSizeChange(e)} value={size}>
-                                        <option value="">Any Size</option>
-                                        <option value="S">S</option>
-                                        <option value="M">M</option>
-                                        <option value="L">L</option>
-                                        <option value="XL">XL</option>
-                                        <option value="XXL">XXL</option>
-                                        <option value="XXXL">XXXL</option>
-                                    </select>
-                                </div>
-                            )}
-                            {/* <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleConditionChange(e)} value={condition}>
-                                    <option value="">Any Location</option>
-                                    <option value="US">US</option>
-                                    <option value="UK">UK</option>
-                                </select>
-                            </div> */}
-                            {FiltersData.find((cat) => cat.category === category)?.haveGender && (
-                                <div className="flex items-center gap-3 w-40">
-                                    {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Gender:</span> */}
-                                    <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handleGenderChange(e)} value={gender}>
-                                        <option value="">Any Gender</option>
-                                        <option value="Mens">Male</option>
-                                        <option value="Womens">Female</option>
-                                        <option value="Unisex">Unisex</option>
-                                    </select>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span> */}
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
-                                    <option value="">Any Price</option>
-                                    <option value="0-200">Under $200</option>
-                                    <option value="200-400">$200 - $400</option>
-                                    <option value="400-600">$400 - $600</option>
-                                    <option value="600+">$600+</option>
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-3 w-[45%] md:w-40">
-                                {/* <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Price:</span>
-                                <select className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body" onChange={(e) => handlePriceChange(e)} value={price}>
-                                    <option value="">Any Price</option>
-                                    <option value="0-200">Under $200</option>
-                                    <option value="200-400">$200 - $400</option>
-                                    <option value="400-600">$400 - $600</option>
-                                    <option value="600+">$600+</option>
-                                </select> */}
-                                <button 
-                                    onClick={() => {
-                                        clearFilters()
-                                    }}
-                                    className=" py-2 bg-[#fefdfb] text-[#a67c52] text-sm font-body"
-                                >
-                                    Clear All
-                                </button>
-                            </div>
+            {!hideFilters && (
+                <div className="bg-[#fefdfb] px-4 md:px-10 py-6 border-b border-[#d4c4b0]">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="flex mb-4 items-center gap-2 md:hidden ">
+                            <button onClick={handleToggleFilters} className="flex items-center gap-2">
+                                <Filter className="w-4 h-4" />
+                                <span className="text-sm font-medium text-[#6b5b4f] font-luxury">Filters</span>
+                            </button>
                         </div>
-                    )}
+                        {showFilters && (
+                            <ProductFilters
+                                category={category}
+                                brand={brand}
+                                condition={condition}
+                                size={size}
+                                gender={gender}
+                                price={price}
+                                onCategoryChange={(val) => handleCategoryChange({ target: { value: val } } as any)}
+                                onBrandChange={(val) => handleBrandChange({ target: { value: val } } as any)}
+                                onConditionChange={(val) => handleConditionChange({ target: { value: val } } as any)}
+                                onSizeChange={(val) => handleSizeChange({ target: { value: val } } as any)}
+                                onGenderChange={(val) => handleGenderChange({ target: { value: val } } as any)}
+                                onPriceChange={(val) => handlePriceChange({ target: { value: val } } as any)}
+                                onClearAll={clearFilters}
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Results Header */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-4 border-b border-[#d4c4b0]">
