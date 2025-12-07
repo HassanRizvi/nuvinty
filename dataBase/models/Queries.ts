@@ -1,10 +1,19 @@
-import mongoose, { model, models } from 'mongoose';
+import mongoose, { model, models, Types } from 'mongoose';
 
 const QuerySchema = new mongoose.Schema({
     query: { type: String },
     status: {
         type: String,
         default: "pending"
+    },
+    landingPageId: {
+        type: Types.ObjectId,
+        ref: 'LandingPage',
+        required: false
+    },
+    limit: {
+        type: Number,
+        required: false
     },
     pages_processed: {
         type: Number,

@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -7,23 +7,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogOverlay,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import ProductFilters from "@/components/ProductFilters"
-import { featchData, GetData } from "@/helper/general"
-import { BaseUrl, Endpoints } from "@/config"
+import { featchData } from "@/helper/general"
+import { BaseUrl } from "@/config"
 import { toast } from "sonner"
-import { ProductInterface } from "@/types/productInterface"
-import ProductCard from "@/components/admin/ProductCard"
+import { Trash2 } from "lucide-react"
 
 type CreateLandingPageDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
+}
+
+type QueryItem = {
+  id: string
+  query: string
+  range: string
 }
 
 export default function CreateLandingPageDialog({
@@ -34,69 +36,12 @@ export default function CreateLandingPageDialog({
   const [step, setStep] = useState(1)
   const [title, setTitle] = useState("")
   const [slug, setSlug] = useState("")
-  const [status, setStatus] = useState<"active" | "draft">("draft")
   const [isLoading, setIsLoading] = useState(false)
 
-  // Filter states
-  const [category, setCategory] = useState("")
-  const [brand, setBrand] = useState("")
-  const [condition, setCondition] = useState("")
-  const [size, setSize] = useState("")
-  const [gender, setGender] = useState("")
-  const [price, setPrice] = useState("")
-
-  // Products preview
-  const [products, setProducts] = useState<ProductInterface[]>([])
-  const [isLoadingProducts, setIsLoadingProducts] = useState(false)
-  const [totalProducts, setTotalProducts] = useState(0)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  
-  // Product actions
-  const [deletedProducts, setDeletedProducts] = useState<string[]>([])
-  const [boostedProducts, setBoostedProducts] = useState<string[]>([])
-
-  const handleClearFilters = () => {
-    setCategory("")
-    setBrand("")
-    setCondition("")
-    setSize("")
-    setGender("")
-    setPrice("")
-  }
-
-  // Fetch products when filters change
-  useEffect(() => {
-    if (step === 2) {
-      setCurrentPage(1) // Reset to page 1 when filters change
-      fetchProducts(1)
-    }
-  }, [step, category, brand, condition, size, gender, price])
-
-  // Fetch products when page changes
-  useEffect(() => {
-    if (step === 2 && currentPage > 1) {
-      fetchProducts(currentPage)
-    }
-  }, [currentPage])
-
-  const fetchProducts = async (page: number) => {
-    setIsLoadingProducts(true)
-    try {
-      const response = await GetData(
-        Endpoints.product.getProducts("", page, 12, category, brand, condition, size, "", gender, price)
-      )
-      if (response?.products) {
-        setProducts(response.products)
-        setTotalProducts(response.pagination?.totalProducts || 0)
-        setTotalPages(response.pagination?.totalPages || 1)
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error)
-    } finally {
-      setIsLoadingProducts(false)
-    }
-  }
+  // Query states
+  const [queries, setQueries] = useState<QueryItem[]>([])
+  const [queryText, setQueryText] = useState("")
+  const [queryRange, setQueryRange] = useState("")
 
   const handleNext = () => {
     if (!title.trim() || !slug.trim()) {
@@ -110,49 +55,45 @@ export default function CreateLandingPageDialog({
     setStep(1)
   }
 
-  const handleDeleteProduct = (productId: string) => {
-    setDeletedProducts((prev) => {
-      if (prev.includes(productId)) {
-        // Remove from deleted
-        return prev.filter((id) => id !== productId)
-      } else {
-        // Add to deleted
-        return [...prev, productId]
-      }
-    })
+  const handleAddQuery = () => {
+    if (!queryText.trim()) {
+      toast.error("Query text is required")
+      return
+    }
+    if (!queryRange.trim()) {
+      toast.error("Range is required")
+      return
+    }
+
+    const newQuery: QueryItem = {
+      id: Date.now().toString(),
+      query: queryText.trim(),
+      range: queryRange.trim(),
+    }
+
+    setQueries((prev) => [newQuery, ...prev])
+    setQueryText("")
+    setQueryRange("")
   }
 
-  const handleBoostProduct = (productId: string) => {
-    setBoostedProducts((prev) => {
-      if (prev.includes(productId)) {
-        // Remove from boosted
-        return prev.filter((id) => id !== productId)
-      } else {
-        // Add to boosted
-        return [...prev, productId]
-      }
-    })
+  const handleRemoveQuery = (id: string) => {
+    setQueries((prev) => prev.filter((q) => q.id !== id))
   }
 
   const handleSubmit = async () => {
     setIsLoading(true)
 
-    const filters: Record<string, string> = {}
-    if (category) filters.category = category
-    if (brand) filters.brand = brand
-    if (condition) filters.condition = condition
-    if (size) filters.size = size
-    if (gender) filters.gender = gender
-    if (price) filters.price = price
-
     const body = {
       Title: title,
       Slug: slug,
-      Status: status,
-      Filters: filters,
+      Filters: {},
       IsDeleted: false,
-      BoostedProducts: boostedProducts,
-      DeletedProjects: deletedProducts,
+      BoostedProducts: [],
+      DeletedProjects: [],
+      Queries: queries.map((q) => ({
+        query: q.query,
+        range: q.range,
+      })),
     }
 
     try {
@@ -162,11 +103,10 @@ export default function CreateLandingPageDialog({
         // Reset form
         setTitle("")
         setSlug("")
-        setStatus("draft")
         setStep(1)
-        setDeletedProducts([])
-        setBoostedProducts([])
-        handleClearFilters()
+        setQueries([])
+        setQueryText("")
+        setQueryRange("")
         onOpenChange(false)
         if (onSuccess) onSuccess()
       } else {
@@ -185,7 +125,7 @@ export default function CreateLandingPageDialog({
         <DialogHeader>
           <DialogTitle>Create Landing Page - Step {step} of 2</DialogTitle>
           <DialogDescription>
-            {step === 1 ? "Enter basic information" : "Configure product filters"}
+            {step === 1 ? "Enter basic information" : "Add queries for the landing page"}
           </DialogDescription>
         </DialogHeader>
 
@@ -214,101 +154,86 @@ export default function CreateLandingPageDialog({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <select
-                  id="status"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as "active" | "draft")}
-                  className="w-full px-4 py-2 border border-[#d4c4b0] rounded-md bg-[#fefdfb] text-[#2c1810] text-sm focus:outline-none focus:border-[#a67c52] font-body"
-                >
-                  <option value="draft">Draft</option>
-                  <option value="active">Active</option>
-                </select>
-              </div>
             </>
           )}
 
           {step === 2 && (
             <>
-              {/* Filters Section */}
-              <div className="space-y-3">
-                <Label>Product Filters</Label>
-                <div className="rounded-lg border p-4 bg-gray-50">
-                  <ProductFilters
-                    category={category}
-                    brand={brand}
-                    condition={condition}
-                    size={size}
-                    gender={gender}
-                    price={price}
-                    onCategoryChange={setCategory}
-                    onBrandChange={setBrand}
-                    onConditionChange={setCondition}
-                    onSizeChange={setSize}
-                    onGenderChange={setGender}
-                    onPriceChange={setPrice}
-                    onClearAll={handleClearFilters}
-                  />
-                </div>
-              </div>
-
-              {/* Products Preview */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>Products Preview</Label>
-                  <span className="text-sm text-muted-foreground">
-                    {isLoadingProducts ? "Loading..." : `${totalProducts} products found`}
-                  </span>
-                </div>
-                <div className="rounded-lg border p-4 bg-white">
-                  {isLoadingProducts ? (
-                    <div className="text-center py-8 text-muted-foreground">Loading products...</div>
-                  ) : products.length > 0 ? (
-                    <>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
-                        {products.map((product) => (
-                          <ProductCard 
-                            key={product._id} 
-                            product={product}
-                            isDeleted={deletedProducts.includes(product._id)}
-                            isBoosted={boostedProducts.includes(product._id)}
-                            onDelete={handleDeleteProduct}
-                            onBoost={handleBoostProduct}
-                          />
-                        ))}
-                      </div>
-                      {totalPages > 1 && (
-                        <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                          <div className="text-sm text-muted-foreground">
-                            Page {currentPage} of {totalPages}
+              {/* Queries List */}
+              {queries.length > 0 && (
+                <div className="space-y-3">
+                  <Label className="text-[#2c1810] font-medium">Added Queries ({queries.length})</Label>
+                  <div className="rounded-lg border border-[#d4c4b0] p-4 bg-[#fefdfb] max-h-64 overflow-y-auto">
+                    <div className="space-y-2">
+                      {queries.map((queryItem) => (
+                        <div
+                          key={queryItem.id}
+                          className="flex items-center justify-between p-3 bg-white rounded border border-[#d4c4b0] hover:border-[#a67c52] transition-colors"
+                        >
+                          <div className="flex-1">
+                            <p className="font-medium text-sm text-[#2c1810]">{queryItem.query}</p>
+                            <p className="text-xs text-[#6b5b4f] mt-1">Range: {queryItem.range}</p>
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setCurrentPage((p) => p - 1)}
-                              disabled={currentPage === 1 || isLoadingProducts}
-                            >
-                              Previous
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setCurrentPage((p) => p + 1)}
-                              disabled={currentPage === totalPages || isLoadingProducts}
-                            >
-                              Next
-                            </Button>
-                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveQuery(queryItem.id)}
+                            className="ml-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No products match the selected filters
+                      ))}
                     </div>
-                  )}
+                  </div>
+                </div>
+              )}
+
+              {/* Add Query Form */}
+              <div className="space-y-3">
+                <Label className="text-[#2c1810] font-medium">Add Query</Label>
+                <div className="rounded-lg border border-[#d4c4b0] p-4 bg-[#fefdfb]">
+                  <div className="flex flex-col sm:flex-row gap-3 items-end">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="query-text" className="text-[#2c1810] text-sm font-medium">Query</Label>
+                      <Input
+                        id="query-text"
+                        placeholder="e.g., designer handbags"
+                        value={queryText}
+                        onChange={(e) => setQueryText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            handleAddQuery()
+                          }
+                        }}
+                        className="border-[#d4c4b0] bg-white text-[#2c1810] focus:border-[#a67c52] focus:ring-[#a67c52] placeholder:text-[#6b5b4f]"
+                      />
+                    </div>
+                    <div className="w-full sm:w-36 space-y-2">
+                      <Label htmlFor="query-range" className="text-[#2c1810] text-sm font-medium">Range</Label>
+                      <Input
+                        id="query-range"
+                        type="number"
+                        placeholder="e.g., 100"
+                        value={queryRange}
+                        onChange={(e) => setQueryRange(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            handleAddQuery()
+                          }
+                        }}
+                        className="border-[#d4c4b0] bg-white text-[#2c1810] focus:border-[#a67c52] focus:ring-[#a67c52] placeholder:text-[#6b5b4f]"
+                      />
+                    </div>
+                    <Button 
+                      onClick={handleAddQuery} 
+                      className="w-full sm:w-auto px-6 bg-[#2c1810] text-white hover:bg-[#1a0f08] transition-colors font-medium"
+                    >
+                      Add Query
+                    </Button>
+                  </div>
                 </div>
               </div>
             </>

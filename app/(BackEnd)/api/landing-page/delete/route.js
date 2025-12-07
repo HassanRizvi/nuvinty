@@ -1,4 +1,4 @@
-import { deleteQuery } from "../querieController";
+import { deleteLandingPage } from "../landingPageController";
 import { corsHeaders, handleOptions } from "@/lib/cors";
 
 export async function OPTIONS() {
@@ -19,7 +19,7 @@ export async function DELETE(request) {
     });
   }
   try {
-    const response = await deleteQuery(id, userId);
+    const response = await deleteLandingPage(id, userId);
     return new Response(JSON.stringify(response), {
       status: response.status,
       headers: {
@@ -28,8 +28,8 @@ export async function DELETE(request) {
       },
     });
   } catch (error) {
-    console.error("deleteQuery error", error);
-    return new Response(JSON.stringify({ error: "Failed to delete query" }), {
+    console.error("deleteLandingPage error", error);
+    return new Response(JSON.stringify({ error: "Failed to delete landing page" }), {
       status: 500,
       headers: {
         "Content-Type": "application/json",
@@ -37,4 +37,5 @@ export async function DELETE(request) {
       },
     });
   }
-} 
+}
+

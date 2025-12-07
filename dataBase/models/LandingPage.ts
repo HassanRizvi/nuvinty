@@ -24,8 +24,8 @@ const landingPageSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'draft'],
-      default: 'draft',
+      enum: ['active', 'draft', 'fetching'],
+      default: 'fetching',
     },
     boostedProducts: [
       {
@@ -37,6 +37,18 @@ const landingPageSchema = new Schema(
       {
         type: Types.ObjectId,
         ref: 'Product',
+      },
+    ],
+    queries: [
+      {
+        query: {
+          type: String,
+          required: true,
+        },
+        range: {
+          type: String,
+          required: true,
+        },
       },
     ],
   },
