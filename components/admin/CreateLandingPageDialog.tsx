@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -42,6 +42,19 @@ export default function CreateLandingPageDialog({
   const [queries, setQueries] = useState<QueryItem[]>([])
   const [queryText, setQueryText] = useState("")
   const [queryRange, setQueryRange] = useState("")
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setStep(1)
+      setTitle("")
+      setSlug("")
+      setQueries([])
+      setQueryText("")
+      setQueryRange("")
+      setIsLoading(false)
+    }
+  }, [open])
 
   const handleNext = () => {
     if (!title.trim() || !slug.trim()) {
