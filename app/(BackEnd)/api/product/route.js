@@ -20,10 +20,43 @@ export async function GET(request) {
   const condition = searchParams.get("condition") || "";
   const location = searchParams.get("location") || "";
   const price = searchParams.get("price") || "";
+  const queryId = searchParams.get("queryId") || "";
+  const queryIds = searchParams.get("queryIds") || ""; // Comma-separated list of query IDs
 
   const pipeline = [];
+  
+  // Handle queryId filter - single queryId or multiple queryIds
+  const hasQueryIdFilter = !!(queryId || queryIds);
+  let queryIdArray = [];
+  
+  if (hasQueryIdFilter) {
+    const mongoose = await import("mongoose");
+    queryIdArray = queryIds 
+      ? queryIds.split(",").map(id => {
+          try {
+            return new mongoose.default.Types.ObjectId(id.trim());
+          } catch (e) {
+            return null;
+          }
+        }).filter(id => id !== null)
+      : queryId
+        ? [new mongoose.default.Types.ObjectId(queryId)]
+        : [];
+    
+    if (queryIdArray.length > 0) {
+      pipeline.push({
+        $match: {
+          queryId: { 
+            $in: queryIdArray,
+            $exists: true,
+            $ne: null
+          }
+        }
+      });
+    }
+  }
 
-  // Build $search compound queries
+  // Build $search compound queries (skip if filtering by queryId)
   const searchConditions = [];
 
   if (searchQuery) {
@@ -78,8 +111,9 @@ export async function GET(request) {
     });
   }
 
-  // Add $search only if we have filters
-  if (searchConditions.length > 0) {
+  // Add $search only if we have filters and NOT filtering by queryId
+  // When filtering by queryId, we don't need text search
+  if (searchConditions.length > 0 && !hasQueryIdFilter) {
     pipeline.push({
       $search: {
         index: "productIndex",

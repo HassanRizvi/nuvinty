@@ -8,8 +8,11 @@ export async function OPTIONS() {
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
-  if (!userId) {
-    return new Response(JSON.stringify({ error: "Missing userId parameter" }), {
+  const landingPageId = searchParams.get("landingPageId");
+  
+  // Allow requests without userId if landingPageId is provided
+  if (!userId && !landingPageId) {
+    return new Response(JSON.stringify({ error: "Missing userId or landingPageId parameter" }), {
       status: 400,
       headers: {
         "Content-Type": "application/json",
@@ -46,9 +49,19 @@ export async function GET(request) {
     const value = searchParams.get(field);
     if (value) filter[field] = value;
   }
+  
+  // Handle landingPageId (ObjectId) - already declared above
+  if (landingPageId) {
+    try {
+      const mongoose = await import("mongoose");
+      filter.landingPageId = new mongoose.default.Types.ObjectId(landingPageId);
+    } catch (error) {
+      console.error("Invalid landingPageId:", error);
+    }
+  }
 
   try {
-    const response = await getAllQueries(userId, filter);
+    const response = await getAllQueries(userId || null, filter);
     return new Response(JSON.stringify(response), {
       status: response.status,
       headers: {

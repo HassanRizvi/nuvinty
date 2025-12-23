@@ -55,6 +55,10 @@ const ProductSchema = new mongoose.Schema({
         type: String, // or Number if you plan to use it for math
         required: true,
       },
+      queryId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "queries",
+      },
 }, { timestamps: true });
 
 export const Product = models.Product || model('Product', ProductSchema)

@@ -64,8 +64,11 @@ async function createQuery(body, userId) {
     }
 }
 async function getAllQueries(userId, filter = {}) {
-    const adminCheck = await checkAdmin(userId);
-    if (adminCheck) return adminCheck;
+    // Only check admin if userId is provided
+    if (userId) {
+        const adminCheck = await checkAdmin(userId);
+        if (adminCheck) return adminCheck;
+    }
     try {
         await connectDB()
         const queries = await Query.find(filter)

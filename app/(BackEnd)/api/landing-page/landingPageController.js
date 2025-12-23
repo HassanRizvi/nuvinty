@@ -109,6 +109,95 @@ async function deleteLandingPage(id, userId) {
   }
 }
 
-export { createLandingPage, deleteLandingPage }
+async function updateLandingPage(id, body, userId) {
+  // Temporary: Skip admin check if no userId provided (will enable auth later)
+  // if (userId) {
+  //   const adminCheck = await checkAdmin(userId);
+  //   if (adminCheck) return adminCheck;
+  // }
+  try {
+    await connectDB()
+    
+    // Find the landing page
+    const landingPage = await LandingPage.findById(id)
+    if (!landingPage) {
+      return {
+        status: 404,
+        message: 'Landing page not found'
+      }
+    }
+
+    // Check if trying to set status to "active"
+    const newStatus = body.status || body.Status
+    if (newStatus === "active") {
+      // Only allow status change to "active" if current status is "draft"
+      if (landingPage.status !== "draft") {
+        return {
+          status: 400,
+          message: `Cannot set status to active. Landing page must be in "draft" status first. Current status is "${landingPage.status}".`
+        }
+      }
+      
+      // Double-check that all queries are completed (safety check)
+      const totalQueries = await Query.countDocuments({ landingPageId: id })
+      const completedQueries = await Query.countDocuments({ 
+        landingPageId: id,
+        status: "completed"
+      })
+
+      if (totalQueries > 0 && completedQueries !== totalQueries) {
+        return {
+          status: 400,
+          message: `Cannot set status to active. Only ${completedQueries} of ${totalQueries} queries are completed. All queries must be completed before activating the landing page.`
+        }
+      }
+    }
+    
+    // Prevent manually setting status to "fetching" or "draft" - these are auto-managed
+    if (newStatus === "fetching" || newStatus === "draft") {
+      // Allow only if it's not being forced (we'll auto-manage based on queries)
+      // But for now, we'll allow it but warn that it might be auto-changed
+    }
+
+    // Prepare update data
+    const updateData = {}
+    if (newStatus) {
+      updateData.status = newStatus
+    }
+    if (body.title || body.Title) {
+      updateData.title = body.title || body.Title
+    }
+    if (body.slug || body.Slug) {
+      updateData.slug = (body.slug || body.Slug)?.toString().trim().toLowerCase()
+    }
+    if (body.filters || body.Filters) {
+      updateData.filters = body.filters || body.Filters
+    }
+    if (body.boostedProducts || body.BoostedProducts) {
+      updateData.boostedProducts = body.boostedProducts || body.BoostedProducts
+    }
+    if (body.deletedProjects || body.DeletedProjects) {
+      updateData.deletedProjects = body.deletedProjects || body.DeletedProjects
+    }
+
+    // Update the landing page
+    const updated = await LandingPage.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    )
+
+    return {
+      status: 200,
+      message: 'Landing page updated successfully',
+      data: updated
+    }
+  } catch (error) {
+    console.log("updateLandingPage error", error)
+    return { status: 500, message: "Failed to update landing page" }
+  }
+}
+
+export { createLandingPage, deleteLandingPage, updateLandingPage }
 
 
