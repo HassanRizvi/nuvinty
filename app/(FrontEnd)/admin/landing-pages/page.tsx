@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Trash2, ChevronDown } from "lucide-react"
+import { Trash2, ChevronDown, TrendingUp } from "lucide-react"
 import { toast } from "sonner"
 import CreateLandingPageDialog from "@/components/admin/CreateLandingPageDialog"
 import {
@@ -55,6 +55,8 @@ export default function AdminLandingPagesPage() {
   const [activationProducts, setActivationProducts] = useState<any[]>([])
   const [isLoadingProducts, setIsLoadingProducts] = useState(false)
   const [isActivating, setIsActivating] = useState(false)
+  const [boostedProductIds, setBoostedProductIds] = useState<Set<string>>(new Set())
+  const [deletedProductIds, setDeletedProductIds] = useState<Set<string>>(new Set())
   const landingPageToDeleteRef = useRef<string | null>(null)
 
   const loadItems = useCallback(async () => {
@@ -135,6 +137,30 @@ export default function AdminLandingPagesPage() {
     }
   }, [])
 
+  const handleBoostProduct = useCallback((productId: string) => {
+    setBoostedProductIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(productId)) {
+        newSet.delete(productId)
+      } else {
+        newSet.add(productId)
+      }
+      return newSet
+    })
+  }, [])
+
+  const handleDeleteProduct = useCallback((productId: string) => {
+    setDeletedProductIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(productId)) {
+        newSet.delete(productId)
+      } else {
+        newSet.add(productId)
+      }
+      return newSet
+    })
+  }, [])
+
   const handleStatusChange = useCallback(async (landingPageId: string, newStatus: string, currentStatus: string, queryStats?: { completed: number; total: number }) => {
     // Validate: Can only set to "active" if current status is "draft"
     if (newStatus === "active") {
@@ -157,6 +183,8 @@ export default function AdminLandingPagesPage() {
       if (landingPage) {
         setActivatingLandingPage(landingPage)
         setActivateDialogOpen(true)
+        setBoostedProductIds(new Set())
+        setDeletedProductIds(new Set())
         await fetchProductsForActivation(landingPage)
       }
       return
@@ -209,13 +237,21 @@ export default function AdminLandingPagesPage() {
       ? `${BaseUrl}/landing-page?id=${activatingLandingPage._id}&userId=${userId}`
       : `${BaseUrl}/landing-page?id=${activatingLandingPage._id}`
 
+    // Convert Sets to arrays for boosted and deleted products
+    const boostedProductsArray = Array.from(boostedProductIds)
+    const deletedProjectsArray = Array.from(deletedProductIds)
+
     try {
       const response = await fetch(updateUrl, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: "active" }),
+        body: JSON.stringify({ 
+          status: "active",
+          boostedProducts: boostedProductsArray,
+          deletedProjects: deletedProjectsArray
+        }),
       })
 
       const data = await response.json()
@@ -225,6 +261,8 @@ export default function AdminLandingPagesPage() {
         setActivateDialogOpen(false)
         setActivatingLandingPage(null)
         setActivationProducts([])
+        setBoostedProductIds(new Set())
+        setDeletedProductIds(new Set())
         await loadItems()
       } else {
         toast.error(data.message || "Failed to activate landing page")
@@ -235,7 +273,7 @@ export default function AdminLandingPagesPage() {
     } finally {
       setIsActivating(false)
     }
-  }, [activatingLandingPage, loadItems])
+  }, [activatingLandingPage, loadItems, boostedProductIds, deletedProductIds])
 
   const handleDeleteConfirm = useCallback(async () => {
     const landingPageId = landingPageToDeleteRef.current
@@ -456,7 +494,18 @@ export default function AdminLandingPagesPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
+      <Dialog 
+        open={activateDialogOpen} 
+        onOpenChange={(open) => {
+          setActivateDialogOpen(open)
+          if (!open) {
+            setActivatingLandingPage(null)
+            setActivationProducts([])
+            setBoostedProductIds(new Set())
+            setDeletedProductIds(new Set())
+          }
+        }}
+      >
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle>Activate Landing Page</DialogTitle>
@@ -476,32 +525,73 @@ export default function AdminLandingPagesPage() {
                   Total Products: <span className="font-semibold">{activationProducts.length}</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {activationProducts.map((product: any) => (
-                    <div
-                      key={product._id || product.id}
-                      className="border rounded-lg p-3 bg-white hover:shadow-md transition-shadow"
-                    >
-                      <div className="aspect-square bg-gray-100 rounded mb-2 overflow-hidden">
-                        {product.images?.[0] ? (
-                          <img
-                            src={product.images[0]}
-                            alt={product.name || "Product"}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                            No Image
+                  {activationProducts.map((product: any) => {
+                    const productId = product._id?.toString() || product.id?.toString()
+                    const isBoosted = productId && boostedProductIds.has(productId)
+                    const isDeleted = productId && deletedProductIds.has(productId)
+                    
+                    return (
+                      <div
+                        key={productId}
+                        className={`border rounded-lg p-3 bg-white hover:shadow-md transition-shadow relative ${
+                          isDeleted ? 'opacity-50 bg-red-50' : ''
+                        } ${isBoosted ? 'border-green-500 bg-green-50' : ''}`}
+                      >
+                        <div className="aspect-square bg-gray-100 rounded mb-2 overflow-hidden relative">
+                          {product.images?.[0] ? (
+                            <img
+                              src={product.images[0]}
+                              alt={product.name || "Product"}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                              No Image
+                            </div>
+                          )}
+                          {/* Boost and Delete Icons */}
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                if (productId) handleBoostProduct(productId)
+                              }}
+                              className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                                isBoosted
+                                  ? 'bg-green-500 text-white shadow-md'
+                                  : 'bg-white bg-opacity-90 text-gray-600 hover:bg-green-500 hover:text-white'
+                              }`}
+                              title={isBoosted ? "Remove Boost" : "Boost Product"}
+                            >
+                              <TrendingUp className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                if (productId) handleDeleteProduct(productId)
+                              }}
+                              className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                                isDeleted
+                                  ? 'bg-red-500 text-white shadow-md'
+                                  : 'bg-white bg-opacity-90 text-gray-600 hover:bg-red-500 hover:text-white'
+                              }`}
+                              title={isDeleted ? "Restore Product" : "Delete Product"}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
-                        )}
+                        </div>
+                        <p className="text-xs font-medium truncate text-gray-900">{product.brand || "Brand"}</p>
+                        <p className="text-xs text-gray-600 truncate mb-1">{product.name || "Product Name"}</p>
+                        <p className="text-sm font-semibold text-[#a67c52]">
+                          ${product.price || "0"}
+                          {product.currency ? ` ${product.currency}` : ""}
+                        </p>
                       </div>
-                      <p className="text-xs font-medium truncate text-gray-900">{product.brand || "Brand"}</p>
-                      <p className="text-xs text-gray-600 truncate mb-1">{product.name || "Product Name"}</p>
-                      <p className="text-sm font-semibold text-[#a67c52]">
-                        ${product.price || "0"}
-                        {product.currency ? ` ${product.currency}` : ""}
-                      </p>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </>
             )}
@@ -514,6 +604,8 @@ export default function AdminLandingPagesPage() {
                 setActivateDialogOpen(false)
                 setActivatingLandingPage(null)
                 setActivationProducts([])
+                setBoostedProductIds(new Set())
+                setDeletedProductIds(new Set())
               }}
               disabled={isActivating}
             >

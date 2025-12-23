@@ -37,6 +37,7 @@ interface ShopProps {
     pagination: PaginationInfo;
     initialFilters?: Filters;
     hideFilters?: boolean;
+    landingPageTitle?: string;
 }
 
 export default function Shop({
@@ -44,6 +45,7 @@ export default function Shop({
     pagination,
     initialFilters = {},
     hideFilters = false,
+    landingPageTitle,
     openAuthModal
 }: ShopProps) {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -523,7 +525,11 @@ export default function Shop({
             {/* Products */}
             <div className="bg-[#fefdfb] px-4 md:px-10 py-10">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">{searchQuery ? `Search results for "${searchQuery}"` : `${category ? category : ""} ${category&&brand ? "-" : ""} ${brand ? brand : ""} ${category || brand ? "-" : ""} ${currentPagination.totalProducts} results`}</h1>
+                    <h1 className="text-2xl font-semibold text-[#2c1810] mb-8 font-luxury">
+                        {searchQuery 
+                            ? `Search results for "${searchQuery}"` 
+                            : `${category ? category : ""} ${category&&brand ? "-" : ""} ${brand ? brand : ""} ${category || brand ? "-" : ""} ${currentPagination.totalProducts} results${landingPageTitle ? ` - ${landingPageTitle}` : ""}`}
+                    </h1>
                     {currentPagination.totalProducts === 0 && (
                         <div className="text-center text-lg text-[#6b5b4f] font-body h-32 flex items-center justify-center">No products found</div>
                     )}

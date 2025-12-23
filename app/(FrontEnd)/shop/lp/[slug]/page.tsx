@@ -53,58 +53,48 @@ async function getProductsByFilters(filters: any, page = 1) {
   }
 }
 
-async function getProductsByQueries(queries: Array<{ query: string; range: string }>) {
+async function getProductsByQueryIds(landingPageId: string) {
   try {
-    const allProducts: any[] = []
-    const seenProductIds = new Set<string>()
-
-    // Fetch products for each query
-    for (const queryItem of queries) {
-      const queryText = queryItem.query
-      const rangeLimit = parseInt(queryItem.range) || 100 // Default to 100 if invalid
+    // Step 1: Fetch queries for this landing page
+    const queriesRes = await GetData({ 
+      url: `${BaseUrl}/queries/all?landingPageId=${landingPageId}`, 
+      method: "GET" 
+    })
+    
+    if (queriesRes?.status === 200 && queriesRes.data && Array.isArray(queriesRes.data) && queriesRes.data.length > 0) {
+      // Step 2: Get all query IDs
+      const queryIds = queriesRes.data
+        .map((q: any) => q._id?.toString() || q.id?.toString())
+        .filter((id: string) => id && id.trim() !== "")
       
-      // Fetch products using the query as search term
-      // Use a high limit to get all products, then limit to range
-      const response = await GetData(
-        Endpoints.product.getProducts(
-          queryText,
-          1,
-          rangeLimit, // Use range as limit
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
-        )
-      )
+      if (queryIds.length === 0) {
+        return { products: [], pagination: {} }
+      }
 
-      if (response?.products && Array.isArray(response.products)) {
-        // Add products that haven't been seen yet (avoid duplicates)
-        for (const product of response.products) {
-          const productId = product._id?.toString() || product.id?.toString()
-          if (productId && !seenProductIds.has(productId)) {
-            seenProductIds.add(productId)
-            allProducts.push(product)
+      // Step 3: Fetch products where queryId matches any of these query IDs
+      const queryIdsParam = queryIds.join(",")
+      const productsUrl = `${BaseUrl}/product?queryIds=${encodeURIComponent(queryIdsParam)}&page=1&limit=10000`
+      
+      const productsRes = await GetData({ url: productsUrl, method: "GET" })
+      
+      if (productsRes?.products && Array.isArray(productsRes.products)) {
+        return {
+          products: productsRes.products,
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalProducts: productsRes.products.length,
+            hasNextPage: false,
+            hasPrevPage: false,
+            limit: productsRes.products.length,
           }
         }
       }
     }
-
-    return {
-      products: allProducts,
-      pagination: {
-        currentPage: 1,
-        totalPages: 1,
-        totalProducts: allProducts.length,
-        hasNextPage: false,
-        hasPrevPage: false,
-        limit: allProducts.length,
-      }
-    }
+    
+    return { products: [], pagination: {} }
   } catch (error) {
-    console.error("Error fetching products by queries:", error)
+    console.error("Error fetching products by query IDs:", error)
     return { products: [], pagination: {} }
   }
 }
@@ -127,8 +117,13 @@ export default async function LandingPage({ params }: PageProps) {
   // Fetch products based on landing page queries or filters
   let productsData
   if (landingPage.queries && Array.isArray(landingPage.queries) && landingPage.queries.length > 0) {
-    // Use queries if available
-    productsData = await getProductsByQueries(landingPage.queries)
+    // Use queryIds to fetch products - get products that have queryId matching landing page's queries
+    const landingPageId = landingPage._id?.toString() || landingPage.id?.toString()
+    if (landingPageId) {
+      productsData = await getProductsByQueryIds(landingPageId)
+    } else {
+      productsData = { products: [], pagination: {} }
+    }
   } else {
     // Fall back to filters if no queries
     productsData = await getProductsByFilters(landingPage.filters || {})
@@ -181,6 +176,7 @@ export default async function LandingPage({ params }: PageProps) {
         price: landingPage.filters?.price || "",
       }}
       hideFilters={true}
+      landingPageTitle={landingPage.title}
     />
   )
 }

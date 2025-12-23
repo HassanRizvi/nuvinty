@@ -1,6 +1,6 @@
 // const BaseUrl = "/api"
-const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://nuvinty-new.vercel.app/api"
-// const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/api"
+// const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://nuvinty-new.vercel.app/api"
+const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/api"
 
 const Endpoints = {
     auth: {
